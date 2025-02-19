@@ -4,7 +4,6 @@ param ([switch] $SaveCredentials)
     Parameters: -SaveCredentials -> will store then entered credentials locally on the PC, this is needed when
                                     running the script unattended
 #>
-
 Clear-Host
 Write-Output "==============================================================================="
 Write-Output "Sophos API - List all Licenses Details"
