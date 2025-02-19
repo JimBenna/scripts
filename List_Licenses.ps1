@@ -1,0 +1,158 @@
+param ([switch] $SaveCredentials)
+<#
+    Description: Authentication Script for Sophos Central
+    Parameters: -SaveCredentials -> will store then entered credentials locally on the PC, this is needed when
+                                    running the script unattended
+#>
+
+Clear-Host
+Write-Output "==============================================================================="
+Write-Output "Sophos API - List all Licenses Details"
+Write-Output "==============================================================================="
+
+# Define the filename and path for the credential file
+$CredentialFile = $PSScriptRoot + '\Sophos_Central_Admin_Credentials.json'
+
+# Check if Central API Credentials have been stored, if not then prompt the user to enter the credentials
+if (((Test-Path $CredentialFile) -eq $false) -or $SaveCredentials){
+	# Prompt for Credentials
+	$ClientId = Read-Host "Please Enter your Client ID"
+    if ($ClientID -eq "") {Break}
+	$ClientSecret = Read-Host "Please Enter your Client Secret" -AsSecureString
+} else { 
+    # Read Credentials from JSON File
+    $Credentials = Get-Content $CredentialFile | ConvertFrom-Json
+    $ClientId = $Credentials[0]
+    $ClientSecret = $Credentials[1] | ConvertTo-SecureString
+}
+
+# We are making use of the PSCredentials object to store the API credentials
+# The Client Secret will be encrypted for the user excuting the script
+# When scheduling execution of the script remember to use the same user context
+$SecureCredentials = New-Object System.Management.Automation.PSCredential -ArgumentList $ClientId , $ClientSecret
+
+# SOPHOS OAuth URL
+$AuthURI = "https://id.sophos.com/api/v2/oauth2/token"
+
+# Body and Header for oAuth2 Authentication
+$AuthBody = @{}
+$AuthBody.Add("grant_type", "client_credentials")
+$AuthBody.Add("client_id", $SecureCredentials.GetNetworkCredential().Username)
+$AuthBody.Add("client_secret", $SecureCredentials.GetNetworkCredential().Password)
+$AuthBody.Add("scope", "token")
+$AuthHead = @{}
+$AuthHead.Add("content-type", "application/x-www-form-urlencoded")
+
+# Set TLS Version
+[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
+
+# Post Request to SOPHOS for OAuth2 token
+try {
+    $Result = (Invoke-RestMethod -Method Post -Uri $AuthURI -Body $AuthBody -Headers $AuthHead -ErrorAction SilentlyContinue -ErrorVariable ScriptError)
+    if ($SaveCredentials) {
+	    $ClientSecret = $ClientSecret | ConvertFrom-SecureString
+	    ConvertTo-Json $ClientID, $ClientSecret | Out-File $CredentialFile -Force
+    }
+} catch {
+    # If there's an error requesting the token, say so, display the error, and break:
+    Write-Output "" 
+	Write-Output "AUTHENTICATION FAILED - Unable to retreive SOPHOS API Authentication Token"
+    Write-Output "Please verify the credentials used!" 
+    Write-Output "" 
+    Write-Output "If you are working with saved credentials then you can reset them by calling"
+    Write-Output "this script with the -SaveCredentials parameter"
+    Write-Output "" 
+    Read-Host -Prompt "Press ENTER to continue..."
+    Break
+}
+
+# Set the Token for use later on:
+$Token = $Result.access_token
+
+# SOPHOS Whoami URI:
+$WhoamiURI = "https://api.central.sophos.com/whoami/v1"
+
+# SOPHOS Whoami Headers:
+$WhoamiHead = @{}
+$WhoamiHead.Add("Content-Type", "application/json")
+$WhoamiHead.Add("Authorization", "Bearer $Token")
+
+# Post Request to SOPHOS for Whoami Details:
+$Result = (Invoke-RestMethod -Method Get -Uri $WhoamiURI -Headers $WhoamiHead -ErrorAction SilentlyContinue -ErrorVariable ScriptError)
+
+Write-Host $WhoamiHead
+
+# Check if we are using tenant (Central Admin) credentials
+if ($Result.idType -ne "tenant") {
+    Write-Output "Aborting script - idType does not match tenant!"
+    Break
+}
+
+# Save Response details
+$TenantID = $Result.id
+# $DataRegion = $Result.ApiHosts.dataRegion
+$DataRegion = $Result.ApiHosts
+
+$EndpointList = @()
+$NextKey = $null
+################# INSERT CODE HERE ###############
+# add this code snippet to one of the auth code samples for Central Admin, Central Enterprise Dashboard or Central Partner (snippets 1 2 or 3)
+# you will find a line that says INSERT CODE HERE
+# add this code snippet to one of the auth code samples for Central Admin, Central Enterprise Dashboard or Central Partner (snippets 1 2 or 3)
+# you will find a line that says INSERT CODE HERE
+
+# SOPHOS Licenses API Headers:
+$TenantHead = @{}
+$TenantHead.Add("Authorization" ,"Bearer $Token")
+$TenantHead.Add("X-Tenant-ID" ,"$TenantID")
+$TenantHead.Add("Content-Type", "application/json")
+$DataRegion ="https://api.central.sophos.com/licenses/v1/licenses"
+
+#Write-Host $Token
+#Write-Host $TenantID
+
+    $GetLicenses = (Invoke-RestMethod -Method Get -Uri $DataRegion -Headers $TenantHead -ErrorAction SilentlyContinue -ErrorVariable ScriptError)
+    $License_list=$GetLicenses.licenses
+
+$DataFirewall="https://api.central.sophos.com/licenses/v1/licenses/firewalls"
+$GetLicensesFirewall = (Invoke-RestMethod -Method Get -Uri $DataFirewall -Headers $TenantHead -ErrorAction SilentlyContinue -ErrorVariable ScriptError)
+$FirewallItemsList=$GetLicensesFirewall.items
+
+Write-Output ""
+Write-Output ""    
+Write-Output "==============================================================================="
+Write-Output "List Products Licenses details"
+Write-Output "==============================================================================="
+
+$License_list | Format-Table -Property @{label='id';e={$_.id}}, 
+                                                    @{label='licenseIdentifier';e={$_.licenseIdentifier}}, 
+                                                    @{label='Product Code';e={$_.Product.code}},
+                                                    @{label='Product Generic Code';e={$_.Product.GenericCode}},                                                    
+                                                    @{label='Product Name';e={$_.Product.name}},                                                    
+                                                    @{label='Start Date';e={$_.StartDate}},
+                                                    @{label='End Date';e={$_.endDate}},
+                                                    @{label='Perpetual';e={$_.perpetual}},
+                                                    @{label='Unlimited';e={$_.unlimited}},                                                    
+                                                    @{label='Type';e={$_.type}},
+                                                    @{label='Quantity';e={$_.quantity}},
+                                                    @{label='Usage Count';e={$_.usage.current.count}},                                                                                                                                                            
+                                                    @{label='Usage Date';e={$_.usage.current.date}},
+                                                    @{label='CollectedAt';e={$_.usage.current.collectedAt}}  
+
+Write-Output ""
+Write-Output ""    
+Write-Output "==============================================================================="
+Write-Output "List Firewall Licenses details"
+Write-Output "==============================================================================="
+$FirewallItemsList | Format-Table -Property @{label='Serial #';e={$_.serialNumber}}, 
+                                                    @{label='Owner ID';e={$_.owner.id}},  
+                                                    @{label='Owner ID';e={$_.owner.type}},
+                                                    @{label='Organization';e={$_.organization.id}},
+                                                    @{label='Partner';e={$_.partner.id}},
+                                                    @{label='Tenant';e={$_.tenant.id}},
+                                                    @{label='Billing Tenant';e={$_.billingTenant}},
+                                                    @{label='Model Type';e={$_.modelType}},
+                                                    @{label='Model';e={$_.model}},
+                                                    @{label='Last Seen';e={$_.lastSeenAt}}                                                    
+                                                                                                       
+                                                                                                                                                           
