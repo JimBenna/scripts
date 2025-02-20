@@ -79,7 +79,7 @@ $WhoamiHead.Add("Authorization", "Bearer $Token")
 # Post Request to SOPHOS for Whoami Details:
 $Result = (Invoke-RestMethod -Method Get -Uri $WhoamiURI -Headers $WhoamiHead -ErrorAction SilentlyContinue -ErrorVariable ScriptError)
 
-Write-Host $WhoamiHead
+# Write-Host $WhoamiHead
 
 # Check if we are using tenant (Central Admin) credentials
 if ($Result.idType -ne "tenant") {
@@ -123,6 +123,8 @@ $DataFirewall="https://api.central.sophos.com/licenses/v1/licenses/firewalls"
 $GetLicensesFirewall = (Invoke-RestMethod -Method Get -Uri $DataFirewall -Headers $TenantHead -ErrorAction SilentlyContinue -ErrorVariable ScriptError)
 $FirewallItemsList=$GetLicensesFirewall.items
 
+
+
 Write-Output ""
 Write-Output ""    
 Write-Output "==============================================================================="
@@ -133,8 +135,8 @@ $License_list | Format-Table -Property @{label='id';e={$_.id}},
                                                     @{label='licenseIdentifier';e={$_.licenseIdentifier}}, 
                                                     @{label='Product Code';e={$_.Product.code}},
                                                     @{label='Product Generic Code';e={$_.Product.GenericCode}},                                                    
-                                                    @{label='Product Name';e={$_.Product.name}},                                                    
-                                                    @{label='Start Date';e={$_.StartDate}},
+#                                                    @{label='Product Name';e={$_.Product.name}},                                                    
+                                                    @{label='Start Date';e={$_.startDate|Get}},
                                                     @{label='End Date';e={$_.endDate}},
                                                     @{label='Perpetual';e={$_.perpetual}},
                                                     @{label='Unlimited';e={$_.unlimited}},                                                    
@@ -151,7 +153,7 @@ Write-Output "List Firewall Licenses details"
 Write-Output "==============================================================================="
 $FirewallItemsList | Format-Table -Property @{label='Serial #';e={$_.serialNumber}}, 
                                                     @{label='Owner ID';e={$_.owner.id}},  
-                                                    @{label='Owner ID';e={$_.owner.type}},
+                                                    @{label='Owner Type';e={$_.owner.type}},
                                                     @{label='Organization';e={$_.organization.id}},
                                                     @{label='Partner';e={$_.partner.id}},
                                                     @{label='Tenant';e={$_.tenant.id}},
