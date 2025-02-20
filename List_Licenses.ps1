@@ -94,11 +94,7 @@ $DataRegion = $Result.ApiHosts
 
 # $EndpointList = @()
 #$NextKey = $null
-################# INSERT CODE HERE ###############
-# add this code snippet to one of the auth code samples for Central Admin, Central Enterprise Dashboard or Central Partner (snippets 1 2 or 3)
-# you will find a line that says INSERT CODE HERE
-# add this code snippet to one of the auth code samples for Central Admin, Central Enterprise Dashboard or Central Partner (snippets 1 2 or 3)
-# you will find a line that says INSERT CODE HERE
+
 ################# INSERT CODE HERE ###############
 # add this code snippet to one of the auth code samples for Central Admin, Central Enterprise Dashboard or Central Partner (snippets 1 2 or 3)
 # you will find a line that says INSERT CODE HERE
@@ -133,8 +129,8 @@ $License_list | Format-Table -Property @{label='id';e={$_.id}},
                                                     @{label='Product Code';e={$_.Product.code}},
                                                     @{label='Product Generic Code';e={$_.Product.GenericCode}},                                                    
                                                     @{label='Product Name';e={$_.Product.name}},                                                    
-                                                    @{label='Start Date';e={$_.startDate|Get}},
-                                                    @{label='End Date';e={$_.endDate}},
+                                                    @{label='Start Date';e={[datetime]::ParseExact($_.startDate, "yyyy-MM-dd",$null).ToString("dd/MM/yyyy")}},
+                                                    @{label='End Date';e={[datetime]::ParseExact($_.endDate, "yyyy-MM-dd",$null).ToString("dd/MM/yyyy")}},
                                                     @{label='Perpetual';e={$_.perpetual}},
                                                     @{label='Unlimited';e={$_.unlimited}},                                                    
                                                     @{label='Type';e={$_.type}},
