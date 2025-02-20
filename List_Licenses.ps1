@@ -92,19 +92,16 @@ $TenantID = $Result.id
 # $DataRegion = $Result.ApiHosts.dataRegion
 $DataRegion = $Result.ApiHosts
 
-<<<<<<< HEAD
-$EndpointList = @()
-$NextKey = $null
+# $EndpointList = @()
+#$NextKey = $null
 ################# INSERT CODE HERE ###############
 # add this code snippet to one of the auth code samples for Central Admin, Central Enterprise Dashboard or Central Partner (snippets 1 2 or 3)
 # you will find a line that says INSERT CODE HERE
 # add this code snippet to one of the auth code samples for Central Admin, Central Enterprise Dashboard or Central Partner (snippets 1 2 or 3)
 # you will find a line that says INSERT CODE HERE
-=======
 ################# INSERT CODE HERE ###############
 # add this code snippet to one of the auth code samples for Central Admin, Central Enterprise Dashboard or Central Partner (snippets 1 2 or 3)
 # you will find a line that says INSERT CODE HERE
->>>>>>> 419000e (Add List licenses PowerShell Script)
 
 # SOPHOS Licenses API Headers:
 $TenantHead = @{}
