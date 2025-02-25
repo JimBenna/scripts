@@ -131,7 +131,7 @@ Write-Output "==================================================================
 Write-Output "List Products Licenses details"
 Write-Output "==============================================================================="
 $ProductLicensesTable=New-Object System.Data.Datatable
-[void]$ProductLicensesTable.Columns.Add("ID")
+[void]$ProductLicensesTable.Columns.Add("Unique ID")
 [void]$ProductLicensesTable.Columns.Add("License ID")
 [void]$ProductLicensesTable.Columns.Add("Product Code")
 [void]$ProductLicensesTable.Columns.Add("Product Name")
@@ -157,21 +157,21 @@ foreach ($FWC in $License_list) {
 [void]$ProductLicensesTable.Rows.Add($FWC.id,$FWC.licenseIdentifier,$FWC.Product.code,$FWC.Product.name,$FWC.Product.GenericCode,$StartingDateFormat,$EndingDateFormat,$FWC.perpetual,$FWC.type,$FWC.quantity,$FWC.unlimited,$FWC.usage.current.count,$UsagegDateFormat,$FWC.usage.current.collectedAt)
 }
 
-$ProductLicensesTable
-$License_list | Format-Table -Property @{label='id';e={$_.id}}, 
-                                                    @{label='licenseIdentifier';e={$_.licenseIdentifier}}, 
-                                                    @{label='Product Code';e={$_.Product.code}},
-                                                    @{label='Product Generic Code';e={$_.Product.GenericCode}},                                                    
-                                                    @{label='Product Name';e={$_.Product.name}},                                                    
-                                                    @{label='Start Date';e={[datetime]::ParseExact($_.startDate, "yyyy-MM-dd",$null).ToString("dd/MM/yyyy")}},
-                                                    @{label='End Date';e={[datetime]::ParseExact($_.endDate, "yyyy-MM-dd",$null).ToString("dd/MM/yyyy")}},
-                                                    @{label='Perpetual';e={$_.perpetual}},
-                                                    @{label='Unlimited';e={$_.unlimited}},                                                    
-                                                    @{label='Type';e={$_.type}},
-                                                    @{label='Quantity';e={$_.quantity}},
-                                                    @{label='Usage Count';e={$_.usage.current.count}},                                                                                                                                                            
-                                                    @{label='Usage Date';e={$_.usage.current.date}},
-                                                    @{label='CollectedAt';e={$_.usage.current.collectedAt}}  
+#$ProductLicensesTable
+#$License_list | Format-Table -Property @{label='id';e={$_.id}}, 
+#                                                    @{label='licenseIdentifier';e={$_.licenseIdentifier}}, 
+#                                                    @{label='Product Code';e={$_.Product.code}},
+#                                                    @{label='Product Generic Code';e={$_.Product.GenericCode}},                                                    
+#                                                    @{label='Product Name';e={$_.Product.name}},                                                    
+#                                                    @{label='Start Date';e={[datetime]::ParseExact($_.startDate, "yyyy-MM-dd",$null).ToString("dd/MM/yyyy")}},
+#                                                    @{label='End Date';e={[datetime]::ParseExact($_.endDate, "yyyy-MM-dd",$null).ToString("dd/MM/yyyy")}},
+#                                                    @{label='Perpetual';e={$_.perpetual}},
+#                                                    @{label='Unlimited';e={$_.unlimited}},                                                    
+#                                                    @{label='Type';e={$_.type}},
+#                                                    @{label='Quantity';e={$_.quantity}},
+#                                                    @{label='Usage Count';e={$_.usage.current.count}},                                                                                                                                                            
+#                                                    @{label='Usage Date';e={$_.usage.current.date}},
+#                                                    @{label='CollectedAt';e={$_.usage.current.collectedAt}}  
 
 Write-Output ""
 Write-Output ""    
@@ -192,5 +192,5 @@ $FirewallItemsList | Format-Table -Property @{label='Serial #';e={$_.serialNumbe
                                                                                                                                                            
 #Create files
 (Get-Culture).DateTimeFormat.ShortDatePattern
-#$License_list | Export-Csv -Path $CSV_License_list -UseCulture
+$ProductLicensesTable | Export-Csv -Path $CSV_License_list -UseCulture
 #$FirewallItemsList | Export-Csv -Path $CSV_FW_License_list 
