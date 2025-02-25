@@ -2,5 +2,6 @@
 
 # Scripts Repositories
 
-## Those scripts written in #PowerShell are intended to grab informations from Sophos Central
+## Those scripts written in PowerShell are intended to grab informations from Sophos Central
 
+They are mainly developped by my german colleagues, and are published and explained in the SOPHOS COMMUNITY Article
