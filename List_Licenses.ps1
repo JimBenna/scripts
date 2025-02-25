@@ -98,6 +98,13 @@ $DataRegion = $Result.ApiHosts
 ################# INSERT CODE HERE ###############
 # add this code snippet to one of the auth code samples for Central Admin, Central Enterprise Dashboard or Central Partner (snippets 1 2 or 3)
 # you will find a line that says INSERT CODE HERE
+#Date for filename
+$ScriptLaunchDate= Get-Date -Format "yyyyMMddHHmmssfff"
+#CSV filename and full directory
+$CSV_License_list = "Products_Licenses_List_$ScriptLaunchDate.csv"
+$CSV_FW_License_list = "Firewall_Licenses_List_$ScriptLaunchDate.csv"
+
+
 
 # SOPHOS Licenses API Headers:
 $TenantHead = @{}
@@ -123,7 +130,34 @@ Write-Output ""
 Write-Output "==============================================================================="
 Write-Output "List Products Licenses details"
 Write-Output "==============================================================================="
+$ProductLicensesTable=New-Object System.Data.Datatable
+[void]$ProductLicensesTable.Columns.Add("ID")
+[void]$ProductLicensesTable.Columns.Add("License ID")
+[void]$ProductLicensesTable.Columns.Add("Product Code")
+[void]$ProductLicensesTable.Columns.Add("Product Name")
+[void]$ProductLicensesTable.Columns.Add("Product Generic Code")
+[void]$ProductLicensesTable.Columns.Add("Start Date")
+[void]$ProductLicensesTable.Columns.Add("End Date")
+[void]$ProductLicensesTable.Columns.Add("Perpetual License")
+[void]$ProductLicensesTable.Columns.Add("License Type")
+[void]$ProductLicensesTable.Columns.Add("Quantity")
+[void]$ProductLicensesTable.Columns.Add("Unlimited")
+[void]$ProductLicensesTable.Columns.Add("Current Usage")
+[void]$ProductLicensesTable.Columns.Add("Current Usage Date")
+[void]$ProductLicensesTable.Columns.Add("Current Usage Colleced At")
 
+
+
+foreach ($FWC in $License_list) {
+
+    $StartingDateFormat=[datetime]::ParseExact($FWC.startDate, "yyyy-MM-dd",$null).ToString("dd/MM/yyyy")
+    $EndingDateFormat=[datetime]::ParseExact($FWC.endDate, "yyyy-MM-dd",$null).ToString("dd/MM/yyyy")
+    $UsagegDateFormat=[datetime]::ParseExact($FWC.usage.current.date, "yyyy-MM-dd",$null).ToString("dd/MM/yyyy")
+ #   $UsageCollectedDateFormat=[datetime]::ParseExact($FWC.usage.current.collectedAt, "yyyy-MM-dd",$null).ToString("dd/MM/yyyy")
+[void]$ProductLicensesTable.Rows.Add($FWC.id,$FWC.licenseIdentifier,$FWC.Product.code,$FWC.Product.name,$FWC.Product.GenericCode,$StartingDateFormat,$EndingDateFormat,$FWC.perpetual,$FWC.type,$FWC.quantity,$FWC.unlimited,$FWC.usage.current.count,$UsagegDateFormat,$FWC.usage.current.collectedAt)
+}
+
+$ProductLicensesTable
 $License_list | Format-Table -Property @{label='id';e={$_.id}}, 
                                                     @{label='licenseIdentifier';e={$_.licenseIdentifier}}, 
                                                     @{label='Product Code';e={$_.Product.code}},
@@ -156,3 +190,7 @@ $FirewallItemsList | Format-Table -Property @{label='Serial #';e={$_.serialNumbe
                                                     @{label='Last Seen';e={$_.lastSeenAt}}                                                    
                                                                                                        
                                                                                                                                                            
+#Create files
+(Get-Culture).DateTimeFormat.ShortDatePattern
+#$License_list | Export-Csv -Path $CSV_License_list -UseCulture
+#$FirewallItemsList | Export-Csv -Path $CSV_FW_License_list 
