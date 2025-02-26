@@ -1,4 +1,3 @@
-[CmdletBinding()]
 param (
     [Parameter(Mandatory=$true)]
     [string]$ClientId="",
@@ -25,7 +24,7 @@ try {
     exit 1
 }
 
-Clear-Host
+#Clear-Host
 Write-Output "==============================================================================="
 Write-Output "Sophos API - List all Licenses Details"
 Write-Output "==============================================================================="
@@ -34,7 +33,7 @@ Write-Output "==================================================================
 # We are making use of the PSCredentials object to store the API credentials
 # The Client Secret will be encrypted for the user excuting the script
 # When scheduling execution of the script remember to use the same user context
-$SecureCredentials = New-Object System.Management.Automation.PSCredential -ArgumentList $ClientId , $ClientSecret
+#$SecureCredentials = New-Object System.Management.Automation.PSCredential -ArgumentList $ClientId , $ClientSecret
 
 # SOPHOS OAuth URL
 $AuthURI = "https://id.sophos.com/api/v2/oauth2/token"
@@ -42,8 +41,10 @@ $AuthURI = "https://id.sophos.com/api/v2/oauth2/token"
 # Body and Header for oAuth2 Authentication
 $AuthBody = @{}
 $AuthBody.Add("grant_type", "client_credentials")
-$AuthBody.Add("client_id", $SecureCredentials.GetNetworkCredential().Username)
-$AuthBody.Add("client_secret", $SecureCredentials.GetNetworkCredential().Password)
+$AuthBody.Add("client_id", $ClientId)
+$AuthBody.Add("client_secret", $ClientSecret)
+#$AuthBody.Add("client_id", $SecureCredentials.GetNetworkCredential().Username)
+#$AuthBody.Add("client_secret", $SecureCredentials.GetNetworkCredential().Password)
 $AuthBody.Add("scope", "token")
 $AuthHead = @{}
 $AuthHead.Add("content-type", "application/x-www-form-urlencoded")
