@@ -1,8 +1,3 @@
-Clear-Host
-Write-Output "==============================================================================="
-Write-Output "Sophos API - List all Licenses Details"
-Write-Output "==============================================================================="
-
 [CmdletBinding()]
 param (
     [Parameter(Mandatory=$true)]
@@ -29,6 +24,12 @@ try {
     Write-Error "An error occurred: $_"
     exit 1
 }
+
+Clear-Host
+Write-Output "==============================================================================="
+Write-Output "Sophos API - List all Licenses Details"
+Write-Output "==============================================================================="
+
 
 # We are making use of the PSCredentials object to store the API credentials
 # The Client Secret will be encrypted for the user excuting the script
