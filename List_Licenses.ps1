@@ -178,19 +178,110 @@ Write-Output ""
 Write-Output "==============================================================================="
 Write-Output "List Firewall Licenses details"
 Write-Output "==============================================================================="
-$FirewallItemsList | Format-Table -Property @{label='Serial #';e={$_.serialNumber}}, 
-                                                    @{label='Owner ID';e={$_.owner.id}},  
-                                                    @{label='Owner Type';e={$_.owner.type}},
-                                                    @{label='Organization';e={$_.organization.id}},
-                                                    @{label='Partner';e={$_.partner.id}},
-                                                    @{label='Tenant';e={$_.tenant.id}},
-                                                    @{label='Billing Tenant';e={$_.billingTenant}},
-                                                    @{label='Model Type';e={$_.modelType}},
-                                                    @{label='Model';e={$_.model}},
-                                                    @{label='Last Seen';e={$_.lastSeenAt}}                                                    
+
+$FirewallsLicensesTable=New-Object System.Data.Datatable
+[void]$FirewallsLicensesTable.Columns.Add("Serial Number")
+[void]$FirewallsLicensesTable.Columns.Add("Owner ID")
+[void]$FirewallsLicensesTable.Columns.Add("Owner Type")
+[void]$FirewallsLicensesTable.Columns.Add("Org ID")
+[void]$FirewallsLicensesTable.Columns.Add("Partner")
+[void]$FirewallsLicensesTable.Columns.Add("Tenant ID")
+[void]$FirewallsLicensesTable.Columns.Add("Billing Tenant")
+[void]$FirewallsLicensesTable.Columns.Add("Model")
+[void]$FirewallsLicensesTable.Columns.Add("Model Type")
+[void]$FirewallsLicensesTable.Columns.Add("Last Seen")
+[void]$FirewallsLicensesTable.Columns.Add("License 01 UID")
+[void]$FirewallsLicensesTable.Columns.Add("License 01 ID")
+[void]$FirewallsLicensesTable.Columns.Add("License 01 Product")
+[void]$FirewallsLicensesTable.Columns.Add("License 01 Start Date")
+[void]$FirewallsLicensesTable.Columns.Add("License 01 End Date")
+[void]$FirewallsLicensesTable.Columns.Add("License 01 Perpetual")
+[void]$FirewallsLicensesTable.Columns.Add("License 01 Type")
+[void]$FirewallsLicensesTable.Columns.Add("License 01 Quantity")
+[void]$FirewallsLicensesTable.Columns.Add("License 01 Usage")
+
+
+
+foreach ($Obj in $License_list) {
+
+#    $StartingDateFormat=[datetime]::ParseExact($FWC.startDate, "yyyy-MM-dd",$null).ToString("dd/MM/yyyy")
+#    $EndingDateFormat=[datetime]::ParseExact($FWC.endDate, "yyyy-MM-dd",$null).ToString("dd/MM/yyyy")
+    $UsagegDateFormat=[datetime]::ParseExact($FWC.usage.current.date, "yyyy-MM-dd",$null).ToString("dd/MM/yyyy")
+ 
+[void]$ProductLicensesTable.Rows.Add($FWC.id,$FWC.licenseIdentifier,$FWC.Product.code,$FWC.Product.name,$FWC.Product.GenericCode,$StartingDateFormat,$EndingDateFormat,$FWC.perpetual,$FWC.type,$FWC.quantity,$FWC.unlimited,$FWC.usage.current.count,$UsagegDateFormat,$FWC.usage.current.collectedAt)
+}
+
+
+# 8 Licences possibles.
+$FirewallItemsList
+
+$serialNumber
+$owner.id
+$owner.type
+$organization.id
+$partner
+$tenant.id
+$billingTenant
+$model
+$modelType
+$lastSeenAt
+$licenses[0].id
+$licenses[0].licenseIdentifier
+$licenses[0].Product
+$licenses[0].startDate
+$licenses[0].endDate
+$licenses[0].perpetual
+$licenses[0].type
+$licenses[0].quantity
+$licenses[0].usage
+$licenses[1].id
+$licenses[1].licenseIdentifier
+$licenses[1].Product
+$licenses[1].startDate
+$licenses[1].endDate
+$licenses[1].perpetual
+$licenses[1].type
+$licenses[1].quantity
+$licenses[1].usage
+$licenses[2].id
+$licenses[2].licenseIdentifier
+$licenses[2].Product
+$licenses[2].startDate
+$licenses[2].endDate
+$licenses[2].perpetual
+$licenses[2].type
+$licenses[2].quantity
+$licenses[2].usage
+$licenses[3].id
+$licenses[3].licenseIdentifier
+$licenses[3].Product
+$licenses[3].startDate
+$licenses[3].endDate
+$licenses[3].perpetual
+$licenses[3].type
+$licenses[3].quantity
+$licenses[3].usage
+
+
+
+
+
+
+    
+}
+#$FirewallItemsList | Format-Table -Property @{label='Serial #';e={$_.serialNumber}}, 
+#                                                    @{label='Owner ID';e={$_.owner.id}},  
+#                                                    @{label='Owner Type';e={$_.owner.type}},
+#                                                    @{label='Organization';e={$_.organization.id}},
+#                                                    @{label='Partner';e={$_.partner.id}},
+#                                                    @{label='Tenant';e={$_.tenant.id}},
+#                                                    @{label='Billing Tenant';e={$_.billingTenant}},
+#                                                    @{label='Model Type';e={$_.modelType}},
+#                                                    @{label='Model';e={$_.model}},
+#                                                    @{label='Last Seen';e={$_.lastSeenAt}}                                                    
                                                                                                        
                                                                                                                                                            
 #Create files
 (Get-Culture).DateTimeFormat.ShortDatePattern
-$ProductLicensesTable | Export-Csv -Path $CSV_License_list -UseCulture
+#$ProductLicensesTable | Export-Csv -Path $CSV_License_list -UseCulture
 #$FirewallItemsList | Export-Csv -Path $CSV_FW_License_list 
