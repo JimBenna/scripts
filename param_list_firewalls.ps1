@@ -241,6 +241,6 @@ $FWClusterTable| Sort-Object -Property CustomerTenantID,ClusterID
 
 #Create files
 #$FilterData | Export-Csv -Path $CSVOutputFile -NoHeader -NoTypeInformation
-$FirewallTable | Export-Csv -Path $CSVFW_list
-$FilterData | Export-Csv -Path $CSVFW_Upgrade_list 
-$FWClusterTable | Export-Csv -Path $CSVFW_Clusters_list
+$FirewallTable | Export-Csv -Path $DirOutput"/"$CSVFW_list
+$FilterData | Export-Csv -Path $DirOutput"/"$CSVFW_Upgrade_list 
+$FWClusterTable | Export-Csv -Path $DirOutput"/"$CSVFW_Clusters_list
