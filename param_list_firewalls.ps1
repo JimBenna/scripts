@@ -46,11 +46,11 @@ try {
         $ClientId=$resultClient.Value
         $resultSecret = Split-StringAfterEqualSign -inputString $ParamClientSecret
         #Write-Host "Id Secret     : "$resultSecret.Key
-        Write-Host "Client Secret : "$resultSecret.Value
+        #Write-Host "Client Secret : "$resultSecret.Value
         $ClientSecret=$resultSecret.Value
 
         $resultDirOutput = Split-StringAfterEqualSign -inputString $DirectoryOutput
-        Write-Host "Client Secret : "$resultDirOutput.Value
+        #Write-Host "Directory Output : "$resultDirOutput.Value
         $DirOutput = $resultDirOutput.Value
     }
 } catch {
@@ -59,7 +59,7 @@ try {
 }
 
 
-# Clear-Host
+Clear-Host
 Write-Output "==============================================================================="
 Write-Output "Sophos API - Firewall lists"
 Write-Output "==============================================================================="
