@@ -1,28 +1,59 @@
+
 param (
     [Parameter(Mandatory=$true)]
-    [string]$ClientId="",
+    [string]$ParamClientId = "",
 
     [Parameter(Mandatory=$true)]
-    [string]$ClientSecret = ""
+    [string]$ParamClientSecret = ""
 )
 
+function Split-StringAfterEqualSign {
+    param (
+        [string]$inputString
+    )
+
+    try {
+        if (-not $inputString.Contains("=")) {
+            throw "Input string does not contain an '=' sign."
+        }
+
+        $splitString = $inputString -split "="
+        return @{
+            Key = $splitString[0]
+            Value = $splitString[1]
+        }
+    }
+    catch {
+        Write-Error "An error occurred: $_"
+    }
+}
+
 try {
-    if (($null -eq $ClientId) -or ($ClientId -eq "")) {
+    if (($null -eq $ParamClientId) -or ($ParamClientId -eq "")) {
         Write-Output "No Client Id provided"
         {break}
     }
-        if (($null -eq $ClientSecret) -or ($ClientSecret -eq "")){
+        if (($null -eq $ParamClientSecret) -or ($ParamClientSecret -eq "")){
         Write-Output "No Client Secret provided"
         {break}
     }
     else {
-        Write-Host "Client Id     : "$ClientId
-        Write-Host "Client Secret : "$ClientSecret
+        $resultClient = Split-StringAfterEqualSign -inputString $ParamClientId
+        #Write-Host "Id Client     : "$resultClient.Key
+        #Write-Host "Client ID     : "$resultClient.Value
+        $ClientId=$resultClient.Value
+        $resultSecret = Split-StringAfterEqualSign -inputString $ParamClientSecret
+        #Write-Host "Id Secret     : "$resultSecret.Key
+        #Write-Host "Client Secret : "$resultSecret.Value
+        $ClientSecret=$resultSecret.Value
     }
 } catch {
-    Write-Error "An error occurred: $_"
+    Write-Error "A basic error occurred: $_"
     exit 1
 }
+
+
+
 
 #Clear-Host
 Write-Output "==============================================================================="
@@ -132,11 +163,11 @@ $FirewallItemsList=$GetLicensesFirewall.items
 
 
 
-Write-Output ""
-Write-Output ""    
-Write-Output "==============================================================================="
-Write-Output "List Products Licenses details"
-Write-Output "==============================================================================="
+#Write-Output ""
+#Write-Output ""    
+#Write-Output "==============================================================================="
+#Write-Output "List Products Licenses details"
+#Write-Output "==============================================================================="
 $ProductLicensesTable=New-Object System.Data.Datatable
 [void]$ProductLicensesTable.Columns.Add("Unique ID")
 [void]$ProductLicensesTable.Columns.Add("License ID")
@@ -180,11 +211,11 @@ foreach ($FWC in $License_list) {
 #                                                    @{label='Usage Date';e={$_.usage.current.date}},
 #                                                    @{label='CollectedAt';e={$_.usage.current.collectedAt}}  
 
-Write-Output ""
-Write-Output ""    
-Write-Output "==============================================================================="
-Write-Output "List Firewall Licenses details"
-Write-Output "==============================================================================="
+#Write-Output ""
+#Write-Output ""    
+#Write-Output "==============================================================================="
+#Write-Output "List Firewall Licenses details"
+#Write-Output "==============================================================================="
 
 $FirewallsLicensesTable=New-Object System.Data.Datatable
 [void]$FirewallsLicensesTable.Columns.Add("Serial Number")
@@ -377,21 +408,6 @@ $Obj.licenses[7].type,
 $Obj.licenses[7].quantity)
 }
 
-
-# 8 Licences possibles.
-
-
-
-
-
-
-
-
-
-
-
-    
-
 #$FirewallItemsList | Format-Table -Property @{label='Serial #';e={$_.serialNumber}}, 
 #                                                    @{label='Owner ID';e={$_.owner.id}},  
 #                                                    @{label='Owner Type';e={$_.owner.type}},
@@ -406,7 +422,7 @@ $Obj.licenses[7].quantity)
                                                                                                                                                            
 #Create files
 # (Get-Culture).DateTimeFormat.ShortDatePattern
-$ProductLicensesTable
-$FirewallsLicensesTable
-#$ProductLicensesTable | Export-Csv -Path $CSV_License_list -UseCulture
-#$FirewallsLicensesTable | Export-Csv -Path $CSV_FW_License_list -UseCulture
+#$ProductLicensesTable
+#$FirewallsLicensesTable
+$ProductLicensesTable | Export-Csv -Path $CSV_License_list -UseCulture
+$FirewallsLicensesTable | Export-Csv -Path $CSV_FW_License_list -UseCulture
