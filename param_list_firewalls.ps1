@@ -69,8 +69,8 @@ $AuthURI = "https://id.sophos.com/api/v2/oauth2/token"
 # Body and Header for oAuth2 Authentication
 $AuthBody = @{}
 $AuthBody.Add("grant_type", "client_credentials")
-$AuthBody.Add("client_id", $SecureCredentials.GetNetworkCredential().Username)
-$AuthBody.Add("client_secret", $SecureCredentials.GetNetworkCredential().Password)
+$AuthBody.Add("client_id", $ClientId)
+$AuthBody.Add("client_secret", $ClientSecret)
 $AuthBody.Add("scope", "token")
 $AuthHead = @{}
 $AuthHead.Add("content-type", "application/x-www-form-urlencoded")
