@@ -59,9 +59,9 @@ try {
 }
 
 
-Clear-Host
+# Clear-Host
 Write-Output "==============================================================================="
-Write-Output "Sophos API - Firewall update check"
+Write-Output "Sophos API - Firewall lists"
 Write-Output "==============================================================================="
 
 # SOPHOS OAuth URL
@@ -237,7 +237,7 @@ foreach ($row in $FirewallTable) {
 #Write-host "-----"
 #$FilterData| Sort-Object -Property CustomerTenant,Serial
 #Write-host "-----"
-$FWClusterTable| Sort-Object -Property CustomerTenantID,ClusterID
+#$FWClusterTable| Sort-Object -Property CustomerTenantID,ClusterID
 
 
 
