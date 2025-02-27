@@ -46,10 +46,11 @@ try {
         $ClientId=$resultClient.Value
         $resultSecret = Split-StringAfterEqualSign -inputString $ParamClientSecret
         #Write-Host "Id Secret     : "$resultSecret.Key
-        #Write-Host "Client Secret : "$resultSecret.Value
+        Write-Host "Client Secret : "$resultSecret.Value
         $ClientSecret=$resultSecret.Value
 
         $resultDirOutput = Split-StringAfterEqualSign -inputString $DirectoryOutput
+        Write-Host "Client Secret : "$resultDirOutput.Value
         $DirOutput = $resultDirOutput.Value
     }
 } catch {
@@ -95,7 +96,8 @@ try {
     Write-Output "this script with the -SaveCredentials parameter"
     Write-Output "" 
     Read-Host -Prompt "Press ENTER to continue..."
-    Break
+    exit 1
+#    Break
 }
 
 # Set the Token for use later on:
