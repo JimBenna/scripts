@@ -3,7 +3,7 @@ param (
     [string]$ParamClientId = "",
 
     [Parameter(Mandatory=$true)]
-    [string]$ParamClientSecret = ""
+    [string]$ParamClientSecret = "",
 
     [Parameter(Mandatory=$true)]
     [string]$DirectoryOutput = ""
