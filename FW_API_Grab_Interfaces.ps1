@@ -63,8 +63,7 @@ function BuildURLFunction {
         [string]$FuncFwPwd,
         [string]$FuncFwTimeOut
     )
-    $FuncUrlLogin="https://"+$FuncFwIP+":"+$FuncFwPort+"/webconsole/APIController?reqxml=<Request><Login><Usern
-ame>"+$FuncFwLogin+"</Username><Password>"+$FuncFwPwd+"</Password></Login><GET>"
+    $FuncUrlLogin="https://"+$FuncFwIP+":"+$FuncFwPort+"/webconsole/APIController?reqxml=<Request><Login><Username>"+$FuncFwLogin+"</Username><Password>"+$FuncFwPwd+"</Password></Login><GET>"
     $FuncUrlCommand="<Interface/>"
     $FuncUrlEnding="</GET></Request>"
     $FuncUrlContentType= @{}
