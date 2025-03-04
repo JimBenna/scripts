@@ -29,7 +29,6 @@ function TranformInterfacesXmlListToArray {
     param (
         [xml]$XmlDocument
     )
-
     $XmlTag = $XmlDocument.SelectNodes("//IPHost")
     $OutTagArray = @()
     foreach ($Node in $XmlTag) {
@@ -62,11 +61,8 @@ if (Test-Path -Path $FullFileName) {
         $ImportCsvFile = Import-Csv -Path $FullFileName
         $Counter = 0
         $MainTable = [System.Collections.ArrayList]::new()
-
         foreach ($Item in $ImportCsvFile) {
-
             try {
-
                 #                Write-Host "---------------------------------------------------------"
                 #                Write-Host "Iteration Number :"$Counter
                 $FwAdminIpAddress = $Item.IPAddress
@@ -80,32 +76,22 @@ if (Test-Path -Path $FullFileName) {
                 #                Write-Host "Credentials Login Password: $($Credentials.GetNetworkCredential().Password)"
                 $AccessTimeOut = $Item.TimeOut
                 #                Write-Host "Access TimeOut            :"$AccessTimeOut
-
-
-
                 $FuncURL = BuildURLFunction -FuncFwIP $FwAdminIpAddress -FuncFwPort $FwAdminListeningPort -FuncFwLogin $($Credentials.UserName) -FuncFwPwd $($Credentials.GetNetworkCredential().Password)
                 #                Write-Host $FuncURL
                 try {
                     $HttpResult = (Invoke-RestMethod -Uri $FuncURL -Method Post -ContentType "application/xml" -SkipCertificateCheck -TimeoutSec $AccessTimeOut)
-
                     #                    $HttpResult=(Invoke-RestMethod -Method Post -Uri $UrlLogin$UrlCommand$UrlEnding -Headers $UrlContentType -ErrorAction SilentlyContinue -ErrorVariable ScriptError -SkipCertificateCheck -OutFile output.xml)
-
                     $InterfacesListArray = TranformInterfacesXmlListToArray -XmlDocument $HttpResult
                     $Firewalls_Object = [PSCustomObject]@{
                         Firewall        = $Item.IPAddress
                         FirewallIPHosts = $InterfacesListArray
                     }
-
                     #    $Firewalls_Object
                     $MainTable.add($Firewalls_Object) | Out-Null
-
                 }
                 catch {
                     Write-Host "Error : $($_.Exception.Message)"
                 }
-
-                #            }
-
             }
             catch {
                 Write-Host "Error encountered while parsing file"
@@ -115,9 +101,7 @@ if (Test-Path -Path $FullFileName) {
             #            Write-Host ""
             $Counter++
             #            Write-Host "Compteur :" $Counter
-
         }
-
     }
     catch {
         Write-Host "File "$FullFileName" exists but can not be accessed in Read mode"
@@ -129,7 +113,6 @@ else {
     exit 3
 }
 # END
-
 $MainTable
 $Table_In_JSON = $MainTable | ConvertTo-Json -Depth 6
 #$Table_In_JSON
