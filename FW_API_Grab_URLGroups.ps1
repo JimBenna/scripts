@@ -18,7 +18,7 @@ Write-Output "==================================================================
 Write-Output ""
 Write-Output "It requires 2 parameters : "
 Write-Output ""
-Write-Host $MyInvocation.MyCommand.Name" param01=firewall_list.csv param02=url_list.json" -ForegroundColor Green
+Write-Host $MyInvocation.MyCommand.Name" param01=<firewall_list.json> param02=<url_list.json>" -ForegroundColor Green
 Write-Output ""
 
 
