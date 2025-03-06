@@ -40,7 +40,7 @@ Write-Host $MyInvocation.MyCommand.Name
 Write-Host ""
 Write-Output "---------------------------------------------"
 # Ask file name and path
-$FullFileName = Read-Host "Please enter CSV filename with full path "
+$FullFileName = Read-Host "Please enter filename with full path without any extension"
 
 $Table = @()
 do {
@@ -50,11 +50,11 @@ do {
     Write-Output "-----------------------------------------------------------------"
     Write-Host
     # Ask users to fill-up informations
-    $IpAddress = Read-Host "Plase type IP Address of Firewall  "
-    $PortNumber = Read-Host "Plase type Port Access of Firewall "
-    $TimeOutNumber = Read-Host "Plase type TimeOut in Seconds "
-    $LoginName = Read-Host "Please type Login Name             "
-    $Password = Read-Host "Please type Password to use        " -AsSecureString
+    $IpAddress = Read-Host     "Please type IP Address of Firewall  "
+    $PortNumber = Read-Host    "Please type Port Access of Firewall "
+    $TimeOutNumber = Read-Host "Please type TimeOut in Seconds      "
+    $LoginName = Read-Host     "Please type Login Name              "
+    $Password = Read-Host      "Please type Password to use         " -AsSecureString
 
     $StoragePwd = $Password | ConvertFrom-SecureString
     $ReadablePwd = ConvertEncodedStringToText $Password
@@ -70,18 +70,22 @@ do {
         TimeOut     = $TimeOutNumber
     }
     $Table += $TableLine
-
+    Write-Host ""
     $OneMore = Read-Host "Add another One ? : (yes/no)"
-
+    Write-Host ""
 }
 while (($OneMore -eq "yes") -or ($OneMore -eq "YES") -or ($OneMore -eq "Yes") -or ($OneMore -eq "Y") -or ($OneMore-eq "y"))
-
+Write-Host ""
 Write-Host "Ok no more line"
 
 if (-Not (Test-Path -Path $FullFileName)) {
-    $Table | Export-Csv -Path $FullFileName -NoTypeInformation
+    $Table | Export-Csv -Path $FullFileName".csv" -NoTypeInformation
+    $JsonFile = $Table | ConvertTo-Json
+    $JsonFile | Out-File -FilePath $FullFileName".json" utf8
 }
 else {
-    $Table | Export-Csv -Path $FullFileName -NoTypeInformation -Append
+    $Table | Export-Csv -Path $FullFileName".csv" -NoTypeInformation -Append
+    $JsonFile = $Table | ConvertTo-Json
+    $JsonFile | Out-File -FilePath $FullFileName".json" utf8 -Append
 }
-Write-Host "All informations have been written in file : "$FullFileName
+Write-Host "All informations have been written in files : "$FullFileName".json" and $FullFileName".csv"

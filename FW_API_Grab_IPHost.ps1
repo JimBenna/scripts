@@ -115,5 +115,5 @@ else {
 # END
 $MainTable
 $Table_In_JSON = $MainTable | ConvertTo-Json -Depth 6
-#$Table_In_JSON
+$Table_In_JSON | Out-File -FilePath /usr/home/IPHhosts.json
 
