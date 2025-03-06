@@ -126,21 +126,21 @@ try {
                 $MainTable = [System.Collections.ArrayList]::new()
                 foreach ($Item in $ImportJsonFile) {
                     try {
-                        Write-Host "---------------------------------------------------------"
-                        Write-Host "Iteration Number           :"$Counter
+#                        Write-Host "---------------------------------------------------------"
+#                        Write-Host "Iteration Number           :"$Counter
                         $FwAdminIpAddress = $Item.IPAddress
-                        Write-Host "IP Address                 :"$FwAdminIpAddress
+#                        Write-Host "IP Address                 :"$FwAdminIpAddress
                         $FwAdminListeningPort = $Item.AccesPortNb
-                        Write-Host "Port Number                :"$FwAdminListeningPort
+#                        Write-Host "Port Number                :"$FwAdminListeningPort
                         $EncryptedPassword = $Item.Password
                         $Password = ConvertTo-SecureString -String $EncryptedPassword
                         $Credentials = New-Object System.Management.Automation.PSCredential ($Item.LoginName, $Password)
-                        Write-Host "Credentials Login name     : $($Credentials.UserName)"
-                        Write-Host "Credentials Login Password : $($Credentials.GetNetworkCredential().Password)"
+#                        Write-Host "Credentials Login name     : $($Credentials.UserName)"
+#                        Write-Host "Credentials Login Password : $($Credentials.GetNetworkCredential().Password)"
                         $AccessTimeOut = $Item.TimeOut
-                        Write-Host "Access TimeOut             :"$AccessTimeOut
+#                        Write-Host "Access TimeOut             :"$AccessTimeOut
                         $FuncURL = BuildURLFunction -FuncFwIP $FwAdminIpAddress -FuncFwPort $FwAdminListeningPort -FuncFwLogin $($Credentials.UserName) -FuncFwPwd $($Credentials.GetNetworkCredential().Password)
-                        Write-Host $FuncURL
+#                        Write-Host $FuncURL
                         try {
                             $HttpResult = (Invoke-RestMethod -Uri $FuncURL -Method Post -ContentType "application/xml" -SkipCertificateCheck -TimeoutSec $AccessTimeOut)
                             $EntriesListArray = TranformInterfacesXmlListToArray -XmlDocument $HttpResult
@@ -164,7 +164,7 @@ try {
                 }            
                 #            Write-Host ""
                 $Counter++
-                Write-Host "Compteur :" $Counter
+#                Write-Host "Compteur :" $Counter
             }
             catch {
                 Write-Host "File "$FullFileName" exists but can not be accessed in Read mode"
