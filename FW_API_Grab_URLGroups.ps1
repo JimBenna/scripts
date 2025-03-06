@@ -190,5 +190,5 @@ catch {
 # $MainTable | Format-Table -AutoSize
 $Table_In_JSON = $MainTable | ConvertTo-Json -Depth 6
 #$Table_In_JSON
-$Table_In_JSON | Out-File -FilePath $OutputFile
+$Table_In_JSON | Out-File -FilePath $OutputFile utf8
 
