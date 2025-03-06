@@ -74,8 +74,7 @@ do {
     $OneMore = Read-Host "Add another One ? : (yes/no)"
 
 }
-while (($OneMore -eq "yes") -or ($OneMore -eq "YES") -or ($OneMore -eq "Yes") -or ($OneMore -eq "Y") -or ($OneM
-        ore -eq "y"))
+while (($OneMore -eq "yes") -or ($OneMore -eq "YES") -or ($OneMore -eq "Yes") -or ($OneMore -eq "Y") -or ($OneMore-eq "y"))
 
 Write-Host "Ok no more line"
 
