@@ -14,7 +14,7 @@ param (
 )
 Clear-Host
 Write-Output "==============================================================================="
-Write-Output "Sophos Firewall API - Gather Web Filtering URL lists"
+Write-Output "Sophos Firewall API - Retrieve Web Filtering URL lists"
 Write-Output "==============================================================================="
 Write-Output ""
 Write-Output "It requires 2 parameters : "
@@ -91,11 +91,17 @@ try {
         exit 2
     }
     if (($null -eq $Param02) -or ($Param02 -eq "")) {
-        Write-Host "   No Output file list has been provided   " -ForegroundColor Red -BackgroundColor Yellow -NoNewline
+        Write-Host "   No Input URL file list has been provided   " -ForegroundColor Red -BackgroundColor Yellow -NoNewline
         write-host""
         write-host""        
         exit 3
     }
+#    if (($null -eq $Param03) -or ($Param03 -eq "")) {
+#        Write-Host "   No Output log file list has been provided   " -ForegroundColor Red -BackgroundColor Yellow -NoNewline
+#        write-host""
+#        write-host""        
+#        exit 4
+#    }
     else {
         #
         # ALL Is OK now we can compute. 
@@ -115,7 +121,12 @@ try {
         $Input02Name = $result02.key
         $Input02Value = $result02.Value
         #        Write-Host "Second Parameter name : "$Input02Name
-        #        Write-Host "Output Filename       : "$Input02Value        
+        #        Write-Host "Output Filename       : "$Input02Value
+        #        $result03 = Split-StringAfterEqualSign -inputString $Param03
+#        Write-Host "Param03 Name        : "$result03.Key
+#        Write-Host "Param03 content     : "$result03.Value
+#        $Input03Name = $result03.key
+#        $Input03Value = $result03.Value          
         $OutputFile = $Input02Value
         if (Test-Path -Path $InputFile) {
             # Input file exists, we can continue
