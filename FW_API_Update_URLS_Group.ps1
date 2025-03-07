@@ -1,11 +1,13 @@
-# This script reads 2 json files 
+# This script use 2 json files 
 # 1. contains firewall list
-# 2. contains a list of url that have to be pushed to firewall WebFilter URL Group
+# 2. Output of data retrieved from each firewalls in the list
 param (
-    [Parameter(Mandatory = $true)]
+    [Parameter(Mandatory = $true), HelpMessage = "Please provide Firewalls list file in JSON format :"]
     [string]$Param01 = "",
-    [Parameter(Mandatory = $true)]
+    # Param01 is firewalls list.    
+    [Parameter(Mandatory = $true), HelpMessage = "Please provide Output file name with full path    :"]
     [string]$Param02 = ""
+    # Param02 is the Output JSON file    
 )
 Clear-Host
 Write-Output "==============================================================================="
@@ -14,7 +16,7 @@ Write-Output "==================================================================
 Write-Output ""
 Write-Output "It requires 2 parameters : "
 Write-Output ""
-Write-Host $MyInvocation.MyCommand.Name" param01=firewall_list.json param02=url_list.json" -ForegroundColor Green
+Write-Host $MyInvocation.MyCommand.Name" param01=<firewall_list.json> param02<=url_list.json>" -ForegroundColor Green
 Write-Output ""
 #
 # ---- CLI Parameters ----
