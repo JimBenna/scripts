@@ -57,7 +57,7 @@ do {
     $Password = Read-Host      "Please type Password to use         " -AsSecureString
 
     $StoragePwd = $Password | ConvertFrom-SecureString
-    $ReadablePwd = ConvertEncodedStringToText $Password
+#    $ReadablePwd = ConvertEncodedStringToText $Password
     #    Write-Host "Password                 : "$Password
     #    Write-Host "Password stocke          : "$StoragePwd
     #    Write-Host "Mot de passe en clair    : "$ReadablePwd
@@ -78,14 +78,15 @@ while (($OneMore -eq "yes") -or ($OneMore -eq "YES") -or ($OneMore -eq "Yes") -o
 Write-Host ""
 Write-Host "Ok no more line"
 
-if (-Not (Test-Path -Path $FullFileName)) {
-    $Table | Export-Csv -Path $FullFileName".csv" -NoTypeInformation
+if (-Not (Test-Path -Path $FullFileName".json"))
+    {
+#    $Table | Export-Csv -Path $FullFileName".csv" -NoTypeInformation
     $JsonFile = $Table | ConvertTo-Json
     $JsonFile | Out-File -FilePath $FullFileName".json" utf8
-}
+    }
 else {
-    $Table | Export-Csv -Path $FullFileName".csv" -NoTypeInformation -Append
+#    $Table | Export-Csv -Path $FullFileName".csv" -NoTypeInformation -Append
     $JsonFile = $Table | ConvertTo-Json
     $JsonFile | Out-File -FilePath $FullFileName".json" utf8 -Append
 }
-Write-Host "All informations have been written in files : "$FullFileName".json" and $FullFileName".csv"
+Write-Host "All informations have been written in file : "$FullFileName".json"
