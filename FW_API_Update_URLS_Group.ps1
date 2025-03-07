@@ -2,10 +2,10 @@
 # 1. contains firewall list
 # 2. contains a list of url that have to be pushed to firewall WebFilter URL Group
 param (
-    [Parameter(Mandatory = $true), HelpMessage = "Please provide Firewalls list file in JSON format :"]
+    [Parameter(Mandatory = $true, HelpMessage = "Please provide Firewalls list file in JSON format :")]
     [string]$Param01 = "",
     # Param01 is firewalls list.    
-    [Parameter(Mandatory = $true), HelpMessage = "Please provide Output file name with full path    :"]
+    [Parameter(Mandatory = $true, HelpMessage = "Please provide Output file name with full path    :")]
     [string]$Param02 = ""
     # Param02 is the Output JSON file    
 )
