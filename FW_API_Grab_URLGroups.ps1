@@ -1,6 +1,6 @@
 # This script reads 2 json files 
 # 1. contains firewall list
-# 2. contains a list of url that have to be pushed to firewall WebFilter URL Group
+# 2. Output of data retrieved from each firewalls in the list
 #
 # ---- CLI Parameters ----
 param (

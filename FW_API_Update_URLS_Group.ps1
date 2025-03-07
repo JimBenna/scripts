@@ -1,6 +1,6 @@
 # This script use 2 json files 
 # 1. contains firewall list
-# 2. Output of data retrieved from each firewalls in the list
+# 2. contains a list of url that have to be pushed to firewall WebFilter URL Group
 param (
     [Parameter(Mandatory = $true), HelpMessage = "Please provide Firewalls list file in JSON format :"]
     [string]$Param01 = "",
