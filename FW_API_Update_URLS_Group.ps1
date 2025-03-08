@@ -154,8 +154,108 @@ try {
         $ImportJsonURLFile = Get-content -Path $Input02Value -Raw | ConvertFrom-Json
         $ArrayFwList =@($ImportJsonFwFile)
         $ArrayUrlListForFw = @($ImportJsonURLFile)
-        $ArrayFwList  | Format-Table -AutoSize
-        $ArrayUrlListForFw | Format-Table -AutoSize
+#        $ArrayFwList  | Format-Table -AutoSize
+#      $ArrayUrlListForFw | Format-Table -AutoSize
+#$ArrayUrlListForFw| Format-Table -AutoSize
+
+# Convert table to xml Document
+            $Xml=New-Object System.Xml.XmlDocument
+            # Create root
+            $Root=$Xml.CreateElement("WebFilterURLGroup")
+            $Xml.AppendChild($Root) | Out-Null
+            $index=@{}
+            $Index=$ArrayUrlListForFw.FirewallURLS
+            $NombreDeNoms=$ArrayUrlListForFw.FirewallURLS.Name.Count
+            Write-Host "Nombre de noms :"$NombreDeNoms
+#          $Index
+            $NameIndex=0
+#                write-host $Index[$NameIndex].XmlUrlList
+$IndexURL=$Index[$NameIndex].XmlUrlList
+$IndexURL01=$Index[0].XmlUrlList
+$IndexURL02=$Index[1].XmlUrlList
+$IndexURL03=$Index[2].XmlUrlList
+Write-host "---"
+$IndexURL01
+Write-host "---"
+$IndexURL02
+
+$IndexURL03
+Write-host "---"
+                write-Host "Itération numéro :" $NameIndex
+                $TableauSplitte=@{}
+                $TableauSplitte=$IndexURL -split '\s+'
+                $NombreElements=$TableauSplitte.$Count
+
+
+
+            for ($i =0; $i -lt $ArrayUrlListForFw.FirewallURLS.Length; $i++)            
+#            foreach ($URLcollection in $ImportJsonURLFile.FirewallURLS) 
+            {
+
+             
+
+                
+
+                # Add Name
+            $WebListName=$Xml.CreateElement("Name")
+#            $WebListName.InnerText = $ArrayUrlListForFw.FirewallURLS.Name
+#            $WebListName.InnerText = $URLcollection.Name[$i]
+            $WebListName.InnerText = $ArrayUrlListForFw.FirewallURLS.Name[$i]
+#            $ArrayUrlListForFw.FirewallURLS.Name[$i]
+            $Root.AppendChild($WebListName) | Out-Null
+            # Add URL List
+            $ElementUrlList=$Xml.CreateElement("URLlist")
+
+            for ($j =0; $j -lt $ArrayUrlListForFw.FirewallURLS.Length; $j++) 
+     #      foreach ($URL_List in $ArrayUrlListForFw.FirewallURLS.XmlUrlList) 
+             {
+#                $TableauSplitte[$i] 
+
+#                $ElementUrlList.InnerText= $URL_List
+#            write-host =$URL_List.XmlUrlList
+
+            # ADD All URLs
+            #$ArrayUrlListForFw.FirewallURLS.XmlUrlList
+#            $URL_List
+
+            for ($k =0; $k -lt $TableauSplitte.length; $k++)
+
+            {
+
+
+                $record=$ArrayUrlListForFw.FirewallURLS.XmlUrlList[$k]
+#                $record
+#                $ImportJsonURLFile.FirewallURLS.XmlUrlList.value
+                $URL01=$Xml.CreateElement("URL")
+#               $URL01.InnerText=$UrlInTheList
+                $URL01.InnerText=$record
+ #               Write-host $UrlInTheList
+  
+                $ElementUrlList.AppendChild($URL01)| Out-Null 
+             }
+            $Root.AppendChild($ElementUrlList)| Out-Null 
+
+#            $URL01=$Xml.CreateElement("URL")
+#            $URL01.InnerText="google.fr"
+#            $ElementUrlList.AppendChild($URL01)
+#            $URL02=$Xml.CreateElement("URL")
+#            $URL02.InnerText="google02.fr"
+#            $ElementUrlList.AppendChild($URL02)
+
+
+            }
+                        # Add Description
+
+                        $Description=$Xml.CreateElement("Description")
+                        $Description.InnerText=$ArrayUrlListForFw.FirewallURLS.Description[$i]
+                        $Root.AppendChild($Description) | Out-Null
+
+
+        }
+        $NameIndex++
+$xmlfilepath = "/home/user/test.xml"
+$xml.Save($xmlfilepath)
+
         $Counter = 0
         $MainTable = [System.Collections.ArrayList]::new()
         foreach ($Item in $ImportJsonFwFile) 
