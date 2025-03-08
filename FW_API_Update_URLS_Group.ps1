@@ -88,8 +88,7 @@ try {
     #        write-host""        
     #        exit 4
     #    }
-    else 
-    {
+    else {
         # Check values are not empties 
         $result01 = Split-StringAfterEqualSign -inputString $Param01
         #        Write-Host "Param01 Name        : "$result01.Key
@@ -109,201 +108,129 @@ try {
         #        $Input03Name = $result03.key
         #        $Input03Value = $result03.Value
     }    
-# Ready to go
-    if (-Not (Test-Path -Path $Input01Value)) 
-    {
-    # Input file does not exist, we should stop
-    Write-Host "File "$Input01Value" does not exist"
-    exit 11
+    # Ready to go
+    if (-Not (Test-Path -Path $Input01Value)) {
+        # Input file does not exist, we should stop
+        Write-Host "File "$Input01Value" does not exist"
+        exit 11
     }
-    else
-    {
-        try 
-        {
-        $file01 = Get-Item $Input01Value
-        $file01.OpenRead().Close()    
+    else {
+        try {
+            $file01 = Get-Item $Input01Value
+            $file01.OpenRead().Close()    
         }
-        catch 
-        {
-        Write-Host "File "$Input01Value" exists but can not be accessed in Read mode"
-        exit 12    
+        catch {
+            Write-Host "File "$Input01Value" exists but can not be accessed in Read mode"
+            exit 12    
         }
     }
-    if (-Not (Test-Path -Path $Input02Value)) 
-    {
-    # Input file does not exist, we should stop
-    Write-Host "File "$Input02Value" does not exist"
-    exit 21
+    if (-Not (Test-Path -Path $Input02Value)) {
+        # Input file does not exist, we should stop
+        Write-Host "File "$Input02Value" does not exist"
+        exit 21
     }
-    else 
-    {
-    # All input files exist We can continue
-        try 
-        {
-        $file02 =  Get-Item $Input02Value
-        $file02.OpenRead().Close()    
+    else {
+        # All input files exist We can continue
+        try {
+            $file02 = Get-Item $Input02Value
+            $file02.OpenRead().Close()    
         }
-        catch 
-        {
-        Write-Host "File "$Input02Value" exists but can not be accessed in Read mode"
-        exit 22    
+        catch {
+            Write-Host "File "$Input02Value" exists but can not be accessed in Read mode"
+            exit 22    
         }
-        try
-        {
-        $ImportJsonFwFile = Get-content -Path $Input01Value -Raw | ConvertFrom-Json
-        $ImportJsonURLFile = Get-content -Path $Input02Value -Raw | ConvertFrom-Json
-        $ArrayFwList =@($ImportJsonFwFile)
-        $ArrayUrlListForFw = @($ImportJsonURLFile)
-#        $ArrayFwList  | Format-Table -AutoSize
-#      $ArrayUrlListForFw | Format-Table -AutoSize
-#$ArrayUrlListForFw| Format-Table -AutoSize
-
+        try {
+            $ImportJsonFwFile = Get-content -Path $Input01Value -Raw | ConvertFrom-Json
+            $ImportJsonURLFile = Get-content -Path $Input02Value -Raw | ConvertFrom-Json
+            $ArrayFwList = @($ImportJsonFwFile)
+            $ArrayUrlListForFw = @($ImportJsonURLFile)
+            $ArrayUrlListForFw
 # Convert table to xml Document
-            $Xml=New-Object System.Xml.XmlDocument
-            # Create root
-            $Root=$Xml.CreateElement("WebFilterURLGroup")
-            $Xml.AppendChild($Root) | Out-Null
-            $index=@{}
-            $Index=$ArrayUrlListForFw.FirewallURLS
-            $NombreDeNoms=$ArrayUrlListForFw.FirewallURLS.Name.Count
+
+
+            $IndexNames = @{}
+            $IndexNames = $ArrayUrlListForFw.FirewallURLS
+            $NombreDeNoms = $ArrayUrlListForFw.FirewallURLS.Name.Count
+
             Write-Host "Nombre de noms :"$NombreDeNoms
-#          $Index
-            $NameIndex=0
-#                write-host $Index[$NameIndex].XmlUrlList
-$IndexURL=$Index[$NameIndex].XmlUrlList
-$IndexURL01=$Index[0].XmlUrlList
-$IndexURL02=$Index[1].XmlUrlList
-$IndexURL03=$Index[2].XmlUrlList
-Write-host "---"
-$IndexURL01
-Write-host "---"
-$IndexURL02
 
-$IndexURL03
-Write-host "---"
-                write-Host "Itération numéro :" $NameIndex
-                $TableauSplitte=@{}
-                $TableauSplitte=$IndexURL -split '\s+'
-                $NombreElements=$TableauSplitte.$Count
-
-
-
-            for ($i =0; $i -lt $ArrayUrlListForFw.FirewallURLS.Length; $i++)            
-#            foreach ($URLcollection in $ImportJsonURLFile.FirewallURLS) 
+            for ($FirewallCount = 0; $FirewallCount -lt $ArrayUrlListForFw.Firewall.Length; $FirewallCount++) 
             {
+                Write-Host "Firewall Name   :"$ArrayUrlListForFw.Firewall[$FirewallCount]
+                $Xml = New-Object System.Xml.XmlDocument
+                # Create root
+                $Root = $Xml.CreateElement("WebFilterURLGroup")
+                $Xml.AppendChild($Root) | Out-Null
 
-             
-
-                
-
-                # Add Name
-            $WebListName=$Xml.CreateElement("Name")
-#            $WebListName.InnerText = $ArrayUrlListForFw.FirewallURLS.Name
-#            $WebListName.InnerText = $URLcollection.Name[$i]
-            $WebListName.InnerText = $ArrayUrlListForFw.FirewallURLS.Name[$i]
-#            $ArrayUrlListForFw.FirewallURLS.Name[$i]
-            $Root.AppendChild($WebListName) | Out-Null
-            # Add URL List
-            $ElementUrlList=$Xml.CreateElement("URLlist")
-
-            for ($j =0; $j -lt $ArrayUrlListForFw.FirewallURLS.Length; $j++) 
-     #      foreach ($URL_List in $ArrayUrlListForFw.FirewallURLS.XmlUrlList) 
-             {
-#                $TableauSplitte[$i] 
-
-#                $ElementUrlList.InnerText= $URL_List
-#            write-host =$URL_List.XmlUrlList
-
-            # ADD All URLs
-            #$ArrayUrlListForFw.FirewallURLS.XmlUrlList
-#            $URL_List
-
-            for ($k =0; $k -lt $TableauSplitte.length; $k++)
-
-            {
-
-
-                $record=$ArrayUrlListForFw.FirewallURLS.XmlUrlList[$k]
-#                $record
-#                $ImportJsonURLFile.FirewallURLS.XmlUrlList.value
-                $URL01=$Xml.CreateElement("URL")
-#               $URL01.InnerText=$UrlInTheList
-                $URL01.InnerText=$record
- #               Write-host $UrlInTheList
-  
-                $ElementUrlList.AppendChild($URL01)| Out-Null 
-             }
-            $Root.AppendChild($ElementUrlList)| Out-Null 
-
-#            $URL01=$Xml.CreateElement("URL")
-#            $URL01.InnerText="google.fr"
-#            $ElementUrlList.AppendChild($URL01)
-#            $URL02=$Xml.CreateElement("URL")
-#            $URL02.InnerText="google02.fr"
-#            $ElementUrlList.AppendChild($URL02)
-
-
+                for ($i = 0; $i -lt 1; $i++) 
+                {
+#           Add Name
+                    $WebListName = $Xml.CreateElement("Name")
+                    $WebListName.InnerText = $ArrayUrlListForFw.FirewallURLS.Name[$i]
+                    $Root.AppendChild($WebListName) | Out-Null
+#           Add URL List
+                    $ElementUrlList = $Xml.CreateElement("URLlist")
+                    foreach ($UrlInTheList in $ArrayUrlListForFw.FirewallURLS[$i].XmlUrlList) 
+                    {
+                        $URL01 = $Xml.CreateElement("URL")
+                        $URL01.InnerText = $UrlInTheList
+                        $ElementUrlList.AppendChild($URL01) | Out-Null
+                    }
+                    $Root.AppendChild($ElementUrlList) | Out-Null 
+#           Add Description
+                    $Description = $Xml.CreateElement("Description")
+                    $Description.InnerText = $ArrayUrlListForFw.FirewallURLS.Description[$i]
+                    $Root.AppendChild($Description) | Out-Null
+                }
+                $xmlfilepath = "/home/user/test.xml"
+                $xml.Save($xmlfilepath)
             }
-                        # Add Description
-
-                        $Description=$Xml.CreateElement("Description")
-                        $Description.InnerText=$ArrayUrlListForFw.FirewallURLS.Description[$i]
-                        $Root.AppendChild($Description) | Out-Null
-
-
-        }
-        $NameIndex++
-$xmlfilepath = "/home/user/test.xml"
-$xml.Save($xmlfilepath)
-
-        $Counter = 0
-        $MainTable = [System.Collections.ArrayList]::new()
-        foreach ($Item in $ImportJsonFwFile) 
-        {
-            try {
-#                        Write-Host "---------------------------------------------------------"
-#                        Write-Host "Iteration Number           :"$Counter
-                $FwAdminIpAddress = $Item.IPAddress
-#                        Write-Host "IP Address                 :"$FwAdminIpAddress
-                $FwAdminListeningPort = $Item.AccesPortNb
-#                        Write-Host "Port Number                :"$FwAdminListeningPort
-                $EncryptedPassword = $Item.Password
-                $Password = ConvertTo-SecureString -String $EncryptedPassword
-                $Credentials = New-Object System.Management.Automation.PSCredential ($Item.LoginName, $Password)
-#                        Write-Host "Credentials Login name     : $($Credentials.UserName)"
-#                        Write-Host "Credentials Login Password : $($Credentials.GetNetworkCredential().Password)"
-                $AccessTimeOut = $Item.TimeOut
-#                        Write-Host "Access TimeOut             :"$AccessTimeOut
-                $FuncURL = BuildURLFunction -FuncFwIP $FwAdminIpAddress -FuncFwPort $FwAdminListeningPort -FuncFwLogin $($Credentials.UserName) -FuncFwPwd $($Credentials.GetNetworkCredential().Password)
-#                        Write-Host $FuncURL
-#                try {
-#                    $HttpResult = (Invoke-RestMethod -Uri $FuncURL -Method Post -ContentType "application/xml" -SkipCertificateCheck -TimeoutSec $AccessTimeOut)
-#                    $EntriesListArray = TranformInterfacesXmlListToArray -XmlDocument $HttpResult
-#                    $Firewalls_Object = [PSCustomObject]@{
-#                        Firewall     = $Item.IPAddress
-#                        FirewallURLS = $EntriesListArray
-#                    }
-#                        $Firewalls_Object
-#                    $MainTable.add($Firewalls_Object) | Out-Null
-#                }
-#                catch {
-#                    Write-host "Error calling URL"
-#                    Write-Host "Error : $($_.Exception.Message)"
-#                }
-            }
-            catch {
-                Write-Host "Error encountered while parsing "$InputFile
-                Write-Host "Error $($_.Exception.Message)"
-                exit 1
-            }
-        }            
+            $Counter = 0
+            $MainTable = [System.Collections.ArrayList]::new()
+            foreach ($Item in $ImportJsonFwFile) {
+                try {
+                    #                        Write-Host "---------------------------------------------------------"
+                    #                        Write-Host "Iteration Number           :"$Counter
+                    $FwAdminIpAddress = $Item.IPAddress
+                    #                        Write-Host "IP Address                 :"$FwAdminIpAddress
+                    $FwAdminListeningPort = $Item.AccesPortNb
+                    #                        Write-Host "Port Number                :"$FwAdminListeningPort
+                    $EncryptedPassword = $Item.Password
+                    $Password = ConvertTo-SecureString -String $EncryptedPassword
+                    $Credentials = New-Object System.Management.Automation.PSCredential ($Item.LoginName, $Password)
+                    #                        Write-Host "Credentials Login name     : $($Credentials.UserName)"
+                    #                        Write-Host "Credentials Login Password : $($Credentials.GetNetworkCredential().Password)"
+                    $AccessTimeOut = $Item.TimeOut
+                    #                        Write-Host "Access TimeOut             :"$AccessTimeOut
+                    $FuncURL = BuildURLFunction -FuncFwIP $FwAdminIpAddress -FuncFwPort $FwAdminListeningPort -FuncFwLogin $($Credentials.UserName) -FuncFwPwd $($Credentials.GetNetworkCredential().Password)
+                    #                        Write-Host $FuncURL
+                    #                try {
+                    #                    $HttpResult = (Invoke-RestMethod -Uri $FuncURL -Method Post -ContentType "application/xml" -SkipCertificateCheck -TimeoutSec $AccessTimeOut)
+                    #                    $EntriesListArray = TranformInterfacesXmlListToArray -XmlDocument $HttpResult
+                    #                    $Firewalls_Object = [PSCustomObject]@{
+                    #                        Firewall     = $Item.IPAddress
+                    #                        FirewallURLS = $EntriesListArray
+                    #                    }
+                    #                        $Firewalls_Object
+                    #                    $MainTable.add($Firewalls_Object) | Out-Null
+                    #                }
+                    #                catch {
+                    #                    Write-host "Error calling URL"
+                    #                    Write-Host "Error : $($_.Exception.Message)"
+                    #                }
+                }
+                catch {
+                    Write-Host "Error encountered while parsing "$InputFile
+                    Write-Host "Error $($_.Exception.Message)"
+                    exit 1
+                }
+            }            
             Write-Host ""
             $FwCounter++
             Write-Host "Firewall Number in "$Input01Value ":" $FwCounter
     
         }
-        catch 
-        {
+        catch {
             write-host ""
             Write-Error "An error occurred: $_"
             write-host ""
