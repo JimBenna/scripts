@@ -158,9 +158,10 @@ try
             $SortedArrayFwList = $ArrayFwList | Sort-Object -Property IPAddress
             $ArrayUrlListForFw = @($ImportJsonURLFile)
 #            $ArrayUrlListForFw
-            $SortedArrayFwList
+#            $SortedArrayFwList
             # Convert table to xml Document
             $FwCounter = 0
+            $WholeStepCounter=0
         foreach ($FirewallEntry in $ArrayUrlListForFw)
         {
             $ComputingFw = $FirewallEntry[$FwCounter].Firewall
@@ -171,21 +172,46 @@ try
             $UrlListCounter = 0
             foreach ($FirewallURLList in $FirewallEntry[$FwCounter].FirewallURLS)
             {
-                $ComputingURLList = $FirewallURLList[$UrlListCounter]
-                $UrlListNumber = 0
-                $EntriesInListNumber = $ComputingURLList[$UrlListNumber].XmlUrlList | Measure-Object | Select-Object -ExpandProperty Count
-                    $UrlListName=$ComputingURLList.Name
-                    write-host "Number of entries into list :"$UrlListName" :"$EntriesInListNumber
-                    write-host "Destination firewall        :"$ComputingFw 
+            $ComputingURLList = $FirewallURLList[$UrlListCounter]
+            $UrlListNumber = 0
+            $EntriesInListNumber = $ComputingURLList[$UrlListNumber].XmlUrlList | Measure-Object | Select-Object -ExpandProperty Count
+            $UrlListName=$ComputingURLList.Name
+            write-host "Number of entries into list :"$UrlListName" :"$EntriesInListNumber
+            write-host "Destination firewall        :"$ComputingFw
+            # Create XML Object
+            $Xml = New-Object System.Xml.XmlDocument
+            # Create root
+            $Root = $Xml.CreateElement("WebFilterURLGroup")
+            $Xml.AppendChild($Root) | Out-Null 
+            $WebListName = $Xml.CreateElement("Name")
+            $WebListName.InnerText = $UrlListName
+            $Root.AppendChild($WebListName) | Out-Null
+            #           Add URL List
+            $ElementUrlList = $Xml.CreateElement("URLlist")    
                     for ($i = 0; $i -lt $EntriesInListNumber; $i++) 
                     {
                     $ComputingUrlListEntry = $ComputingURLList[$UrlListNumber].XmlUrlList[$i]
+                    $URL01 = $Xml.CreateElement("URL")
+                    $URL01.InnerText = $ComputingUrlListEntry
+                    $ElementUrlList.AppendChild($URL01) | Out-Null
                     write-host "URL Number         : "$i "    :"$ComputingUrlListEntry
+
                     }
-                $UrlListNumber++
+                    $WholeStepCounter++
+            $Root.AppendChild($ElementUrlList) | Out-Null 
+            #           Add Description
+            $Description = $Xml.CreateElement("Description")
+            $Description.InnerText =$ComputingURLList.Description
+            $Root.AppendChild($Description) | Out-Null
+            write-host "La on passe " $Xml
+            $xmlfilepath = "/home/user/test"+$WholeStepCounter+".xml"
+            $xml.Save($xmlfilepath)
+            $UrlListNumber++
             }
             $UrlListCounter++
+            $WholeStepCounter++
         }
+
         $FwCounter++
             $MainTable = [System.Collections.ArrayList]::new()
             foreach ($Item in $ImportJsonFwFile) 
