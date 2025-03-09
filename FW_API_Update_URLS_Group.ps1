@@ -23,8 +23,6 @@ Write-Output "It requires 3 parameters : "
 Write-Output ""
 Write-Host $MyInvocation.MyCommand.Name" param01=<firewall_list.json> param02<=url_list.json> param03<=Ouput Log file.txt>" -ForegroundColor Green
 Write-Output ""
-
-
 # ---- Functions ----
 function Split-StringAfterEqualSign {
     param (
@@ -145,7 +143,7 @@ try {
             $ArrayFwList = @($ImportJsonFwFile)
             $ArrayUrlListForFw = @($ImportJsonURLFile)
             $ArrayUrlListForFw
-# Convert table to xml Document
+            # Convert table to xml Document
 
 
             $IndexNames = @{}
@@ -154,30 +152,27 @@ try {
 
             Write-Host "Nombre de noms :"$NombreDeNoms
 
-            for ($FirewallCount = 0; $FirewallCount -lt $ArrayUrlListForFw.Firewall.Length; $FirewallCount++) 
-            {
+            for ($FirewallCount = 0; $FirewallCount -lt $ArrayUrlListForFw.Firewall.Length; $FirewallCount++) {
                 Write-Host "Firewall Name   :"$ArrayUrlListForFw.Firewall[$FirewallCount]
                 $Xml = New-Object System.Xml.XmlDocument
                 # Create root
                 $Root = $Xml.CreateElement("WebFilterURLGroup")
                 $Xml.AppendChild($Root) | Out-Null
 
-                for ($i = 0; $i -lt 1; $i++) 
-                {
-#           Add Name
+                for ($i = 0; $i -lt 1; $i++) {
+                    #           Add Name
                     $WebListName = $Xml.CreateElement("Name")
                     $WebListName.InnerText = $ArrayUrlListForFw.FirewallURLS.Name[$i]
                     $Root.AppendChild($WebListName) | Out-Null
-#           Add URL List
+                    #           Add URL List
                     $ElementUrlList = $Xml.CreateElement("URLlist")
-                    foreach ($UrlInTheList in $ArrayUrlListForFw.FirewallURLS[$i].XmlUrlList) 
-                    {
+                    foreach ($UrlInTheList in $ArrayUrlListForFw.FirewallURLS[$i].XmlUrlList) {
                         $URL01 = $Xml.CreateElement("URL")
                         $URL01.InnerText = $UrlInTheList
                         $ElementUrlList.AppendChild($URL01) | Out-Null
                     }
                     $Root.AppendChild($ElementUrlList) | Out-Null 
-#           Add Description
+                    #           Add Description
                     $Description = $Xml.CreateElement("Description")
                     $Description.InnerText = $ArrayUrlListForFw.FirewallURLS.Description[$i]
                     $Root.AppendChild($Description) | Out-Null
