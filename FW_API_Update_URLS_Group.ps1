@@ -158,7 +158,7 @@ try
             $SortedArrayFwList = $ArrayFwList | Sort-Object -Property IPAddress
             $ArrayUrlListForFw = @($ImportJsonURLFile)
 #            $ArrayUrlListForFw
-#            $SortedArrayFwList
+#           $SortedArrayFwList
             # Convert table to xml Document
             $FwCounter = 0
             $WholeStepCounter=0
@@ -176,11 +176,11 @@ try
             $UrlListNumber = 0
             $EntriesInListNumber = $ComputingURLList[$UrlListNumber].XmlUrlList | Measure-Object | Select-Object -ExpandProperty Count
             $UrlListName=$ComputingURLList.Name
-            write-host "Number of entries into list :"$UrlListName" :"$EntriesInListNumber
-            write-host "Destination firewall        :"$ComputingFw
+#            write-host "Number of entries into list :"$UrlListName" :"$EntriesInListNumber
+#            write-host "Destination firewall        :"$ComputingFw
             # Create XML Object
             $Xml = New-Object System.Xml.XmlDocument
-            # Create root
+            # Create root of xml File
             $Root = $Xml.CreateElement("WebFilterURLGroup")
             $Xml.AppendChild($Root) | Out-Null 
             $WebListName = $Xml.CreateElement("Name")
@@ -194,7 +194,7 @@ try
                     $URL01 = $Xml.CreateElement("URL")
                     $URL01.InnerText = $ComputingUrlListEntry
                     $ElementUrlList.AppendChild($URL01) | Out-Null
-                    write-host "URL Number         : "$i "    :"$ComputingUrlListEntry
+#                    write-host "URL Number         : "$i "    :"$ComputingUrlListEntry
 
                     }
                     $WholeStepCounter++
@@ -203,7 +203,21 @@ try
             $Description = $Xml.CreateElement("Description")
             $Description.InnerText =$ComputingURLList.Description
             $Root.AppendChild($Description) | Out-Null
-            write-host "La on passe " $Xml
+            write-host "La on passe " $Xml.OuterXml
+#            write-host "IP Address firewall to update    :"$ComputingFw
+            foreach ($SearchedFirewall in $SortedArrayFwList.IPAddress) 
+                {
+                    if ($SearchedFirewall -eq $ComputingFw) 
+	                {
+                    Write-Output "Identifiants pour $SearchedFirewall trouvés !"
+                     # Faites quelque chose ici
+                    break
+    	           }
+                    else 
+                    {
+                    write-host "LogFile update"
+                    }
+                }
             $xmlfilepath = "/home/user/test"+$WholeStepCounter+".xml"
             $xml.Save($xmlfilepath)
             $UrlListNumber++
