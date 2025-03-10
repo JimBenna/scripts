@@ -50,6 +50,16 @@ function Split-StringAfterEqualSign
         exit 5
     }
 }
+function GenearateRandomString
+{
+param
+(
+[integer]$NbCharacters
+)
+$UsedCharacters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
+$RandomString = -join((1..$NbCharacters)| ForEach-Object {$UsedCharacters[(Get-Random -Maximum $UsedCharacters.Length)]})
+return $RandomString
+}
 function BuildURLFunction 
 {
     param (
@@ -58,13 +68,15 @@ function BuildURLFunction
         [string]$FuncFwLogin,
         [string]$FuncFwPwd,
         [string]$FuncFwTimeOut
+        [string]$UpdateParam
     )
-    $FuncUrlLogin = "https://" + $FuncFwIP + ":" + $FuncFwPort + "/webconsole/APIController?reqxml=<Request><Login><Username>" + $FuncFwLogin + "</Username><Password>" + $FuncFwPwd + "</Password></Login><GET>"
-    $FuncUrlCommand = "<IPHost/>"
-    $FuncUrlEnding = "</GET></Request>"
+    $TransactionId= GenearateRandomString -NbCharacters 8
+    $FuncUrlLogin = "https://" + $FuncFwIP + ":" + $FuncFwPort + "/webconsole/APIController?reqxml=<Request><Login><Username>" + $FuncFwLogin + "</Username><Password>" + $FuncFwPwd + "</Password></Login><SET>"
+    $FuncUrlCommand = '<WebFilterURLGroup transactionid="'+$TransactionId+'">'
+    $FuncUrlEnding = "</WebFilterURLGroup></SET></Request>"
     $FuncUrlContentType = @{}
     $FuncUrlContentType.Add("content-type", "application/xml")
-    [string]$WholeCompletedURL = $FuncUrlLogin + $FuncUrlCommand + $FuncUrlEnding
+    [string]$WholeCompletedURL = $FuncUrlLogin + $FuncUrlCommand + $UpdateParam + $FuncUrlEnding
     return $WholeCompletedURL
 }
 
@@ -209,9 +221,28 @@ try
                 {
                     if ($SearchedFirewall -eq $ComputingFw) 
 	                {
-                    Write-Output "Identifiants pour $SearchedFirewall trouvés !"
-                     # Faites quelque chose ici
-                    break
+                    try {
+                        $FwAdminIpAddress = $SortedArrayFwList.IPAddress
+                        Write-Host "IP Address                 :"$FwAdminIpAddress
+                        $FwAdminListeningPort = $SortedArrayFwList.AccesPortNb
+                        Write-Host "Port Number                :"$FwAdminListeningPort
+                        $EncryptedPassword = $SortedArrayFwList.Password
+                        $Password = ConvertTo-SecureString -String $EncryptedPassword
+                        $Credentials = New-Object System.Management.Automation.PSCredential ($SortedArrayFwList.LoginName, $Password)
+                        Write-Host "Credentials Login name     : $($Credentials.UserName)"
+                        Write-Host "Credentials Login Password : $($Credentials.GetNetworkCredential().Password)"
+                        $AccessTimeOut = $SortedArrayFwList.TimeOut
+                        Write-Host "Access TimeOut             :"$AccessTimeOut
+                        Write-Output "Identifiants pour $SearchedFirewall trouvés !"
+                        # Faites quelque chose ici
+                        $FuncURL = BuildURLFunction -FuncFwIP $FwAdminIpAddress -FuncFwPort $FwAdminListeningPort -FuncFwLogin $($Credentials.UserName) -FuncFwPwd $($Credentials.GetNetworkCredential().Password) -UpdateParam $Xml.OuterXml
+                       break
+                    }
+                    catch {
+                        Write-Host "Error encountered while parsing the file "$Input01Value
+                        Write-Host "Error $($_.Exception.Message)"
+                        exit 1
+                    }
     	           }
                     else 
                     {
