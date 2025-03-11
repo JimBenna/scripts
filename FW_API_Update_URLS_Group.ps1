@@ -81,10 +81,11 @@ function BuildURLPayload
         [string]$PayloadParameters
     )
     $TransactionId= GenearateRandomString -NbCharacters $PayloadStrLength
-    $PayLoadString = '-Form "reqxml='
-    $PayLoadLogin  = "<Request><Login><Username>" + $PayloadFwLogin + "</Username><Password>" + $PayloadFwPwd + "</Password></Login>"
-    $PayloadCommand = "<SET><WebFilterURLGroup transactionid=$TransactionId>"
-    $PayloadlEnding = '</WebFilterURLGroup></SET></Request>"'
+#    $PayLoadString = ' -Form "reqxml=<'
+   $PayLoadString = "?reqxml="
+    $PayLoadLogin  = "<Request><Login><Username>"+ $PayloadFwLogin+"</Username><Password>"+$PayloadFwPwd+"</Password></Login>"
+    $PayloadCommand = "<Set><WebFilterURLGroup>"
+    $PayloadlEnding = "</WebFilterURLGroup></Set></Request>"
 
     [string]$WholePayload = $PayLoadString + $PayLoadLogin + $PayloadCommand + $PayloadParameters + $PayloadlEnding
     return $WholePayload
@@ -202,7 +203,7 @@ try
 #            write-host "Destination firewall        :"$ComputingFw
             # XML content stored in a string
             # Beginning of the string that will compose the XLM entries
-            $xmlContentStart = "<Name>$UrlListName</Name><URLlist>"
+            $xmlContentStart = "<Name>$UrlListName</Name>"
             # Iterates to build the list of objects
             [string]$xmlContentObjects=""
             for ($i = 0; $i -lt $EntriesInListNumber; $i++) 
@@ -210,9 +211,9 @@ try
                     $xmlContentObjects+="<URL>$($ComputingURLList[$($UrlListNumber)].XmlUrlList[$($i)])</URL>"
                     }
             # End of the string
-            $xmlContentEnding="</URLlist><Description>$($ComputingURLList.Description)</Description>"
+            $xmlContentEnding="<Description>$($ComputingURLList.Description)</Description><URLlist>"
             #Build the whole string
-            $xmlContent=$xmlContentStart+$xmlContentObjects+$xmlContentEnding
+            $xmlContent=$xmlContentStart+$xmlContentEnding+$xmlContentObjects+"</URLlist>"
  #           write-host "URL List : "$xmlContent
             $WholeStepCounter++
 #            write-host "IP Address firewall to update    :"$ComputingFw
@@ -242,9 +243,12 @@ try
                         {
                         write-host "Form Payload  :" $FormPayload 
                         write-host "FuncURL Reply :" $FuncURL
+                        $FullURI = $FuncURL+$FormPayload
 #                        $HttpResult = Invoke-RestMethod -Uri $FuncURL -Method 'Post' -ContentType "application/xml" -SkipCertificateCheck -Body $FormPayload -TimeoutSec $AccessTimeOut
-                        $HttpResult = Invoke-RestMethod -SkipCertificateCheck -Uri $FuncURL -Method "Post" -Body $FormPayload -TimeoutSec $AccessTimeOut                        
-                        $HttpResult
+                        #$HttpResult = Invoke-RestMethod -SkipCertificateCheck -Uri $FuncURL -Method "Post" -Body $FormPayload -TimeoutSec $AccessTimeOut                        
+                        $HttpResult = Invoke-RestMethod -Uri $FullURI -Method 'Post' -ContentType "application/xml" -SkipCertificateCheck -Body $FormPayload -TimeoutSec $AccessTimeOut
+                        write-host "URL Passée :" $FullURI
+                        $HttpResult.OuterXml
                         Write-host " Resultat :"$HttpResult
                         }
                     catch 
