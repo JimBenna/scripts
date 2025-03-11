@@ -81,12 +81,12 @@ Write-Host "Ok no more line"
 if (-Not (Test-Path -Path $FullFileName".json"))
     {
 #    $Table | Export-Csv -Path $FullFileName".csv" -NoTypeInformation
-    $JsonFile = $Table | ConvertTo-Json
+    $JsonFile = $Table | Sort-Object -Property IPAddress | ConvertTo-Json
     $JsonFile | Out-File -FilePath $FullFileName".json" utf8
     }
 else {
 #    $Table | Export-Csv -Path $FullFileName".csv" -NoTypeInformation -Append
-    $JsonFile = $Table | ConvertTo-Json
+    $JsonFile = $Table | Sort-Object -Property IPAddress | ConvertTo-Json
     $JsonFile | Out-File -FilePath $FullFileName".json" utf8 -Append
 }
 Write-Host "All informations have been written in file : "$FullFileName".json"
