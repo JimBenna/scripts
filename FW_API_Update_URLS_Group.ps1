@@ -54,10 +54,11 @@ function GenearateRandomString
 {
 param
 (
-[integer]$NbCharacters
+    [Int16]$NbCharacters
 )
 $UsedCharacters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
-$RandomString = -join((1..$NbCharacters)| ForEach-Object {$UsedCharacters[(Get-Random -Maximum $UsedCharacters.Length)]})
+$RandomString = -join((1..$NbCharacters)| ForEach-Object {$UsedCharacters[(Get-Random -Maximum $UsedCharacters.Length)] })
+
 return $RandomString
 }
 function BuildURLFunction 
@@ -67,17 +68,35 @@ function BuildURLFunction
         [string]$FuncFwPort,
         [string]$FuncFwLogin,
         [string]$FuncFwPwd,
-        [string]$FuncFwTimeOut
+        [string]$FuncFwTimeOut,
         [string]$UpdateParam
     )
-    $TransactionId= GenearateRandomString -NbCharacters 8
-    $FuncUrlLogin = "https://" + $FuncFwIP + ":" + $FuncFwPort + "/webconsole/APIController?reqxml=<Request><Login><Username>" + $FuncFwLogin + "</Username><Password>" + $FuncFwPwd + "</Password></Login><SET>"
-    $FuncUrlCommand = '<WebFilterURLGroup transactionid="'+$TransactionId+'">'
+    $TransactionId= GenearateRandomString -NbCharacters 12
+    $FuncUrlLogin = "https://" + $FuncFwIP + ":" + $FuncFwPort + "/webconsole/APIController?reqxml=<Request><Login><Username>" + $FuncFwLogin + "</Username><Password>" + $FuncFwPwd + "</Password></Login>"
+    $FuncUrlCommand = "<SET><WebFilterURLGroup transactionid=$TransactionId>"
     $FuncUrlEnding = "</WebFilterURLGroup></SET></Request>"
     $FuncUrlContentType = @{}
     $FuncUrlContentType.Add("content-type", "application/xml")
     [string]$WholeCompletedURL = $FuncUrlLogin + $FuncUrlCommand + $UpdateParam + $FuncUrlEnding
     return $WholeCompletedURL
+}
+
+function BuildURLPayload 
+{
+    param (
+        [string]$PayloadFwLogin,
+        [string]$PayloadFwPwd,
+        [string]$PayloadStrLength,
+        [string]$PayloadParameters
+    )
+    $TransactionId= GenearateRandomString -NbCharacters $PayloadStrLength
+    $PayLoadString = '-Form "reqxml='
+    $PayLoadLogin  = "<Request><Login><Username>" + $PayloadFwLogin + "</Username><Password>" + $PayloadFwPwd + "</Password></Login>"
+    $PayloadCommand = "<SET><WebFilterURLGroup transactionid=$TransactionId>"
+    $PayloadlEnding = '</WebFilterURLGroup></SET></Request>"'
+
+    [string]$WholePayload = $PayLoadString + $PayLoadLogin + $PayloadCommand + $PayloadParameters + $PayloadlEnding
+    return $WholePayload
 }
 
 try 
@@ -190,52 +209,45 @@ try
             $UrlListName=$ComputingURLList.Name
 #            write-host "Number of entries into list :"$UrlListName" :"$EntriesInListNumber
 #            write-host "Destination firewall        :"$ComputingFw
-            # Create XML Object
-            $Xml = New-Object System.Xml.XmlDocument
-            # Create root of xml File
-            $Root = $Xml.CreateElement("WebFilterURLGroup")
-            $Xml.AppendChild($Root) | Out-Null 
-            $WebListName = $Xml.CreateElement("Name")
-            $WebListName.InnerText = $UrlListName
-            $Root.AppendChild($WebListName) | Out-Null
-            #           Add URL List
-            $ElementUrlList = $Xml.CreateElement("URLlist")    
-                    for ($i = 0; $i -lt $EntriesInListNumber; $i++) 
+            # XML content stored in a string
+            # Beginning of the string that will compose the XLM entries
+            $xmlContentStart = "<Name>$UrlListName</Name><URLlist>"
+            # Iterates to build the list of objects
+            [string]$xmlContentObjects=""
+            for ($i = 0; $i -lt $EntriesInListNumber; $i++) 
                     {
-                    $ComputingUrlListEntry = $ComputingURLList[$UrlListNumber].XmlUrlList[$i]
-                    $URL01 = $Xml.CreateElement("URL")
-                    $URL01.InnerText = $ComputingUrlListEntry
-                    $ElementUrlList.AppendChild($URL01) | Out-Null
-#                    write-host "URL Number         : "$i "    :"$ComputingUrlListEntry
-
+                    $xmlContentObjects+="<URL>$($ComputingURLList[$($UrlListNumber)].XmlUrlList[$($i)])</URL>"
                     }
-                    $WholeStepCounter++
-            $Root.AppendChild($ElementUrlList) | Out-Null 
-            #           Add Description
-            $Description = $Xml.CreateElement("Description")
-            $Description.InnerText =$ComputingURLList.Description
-            $Root.AppendChild($Description) | Out-Null
-            write-host "La on passe " $Xml.OuterXml
+            # End of the string
+            $xmlContentEnding="</URLlist><Description>$($ComputingURLList.Description)</Description>"
+            #Build the whole string
+            $xmlContent=$xmlContentStart+$xmlContentObjects+$xmlContentEnding
+ #           write-host "URL List : "$xmlContent
+            $WholeStepCounter++
 #            write-host "IP Address firewall to update    :"$ComputingFw
+            write-host ""
             foreach ($SearchedFirewall in $SortedArrayFwList.IPAddress) 
                 {
                     if ($SearchedFirewall -eq $ComputingFw) 
 	                {
                     try {
                         $FwAdminIpAddress = $SortedArrayFwList.IPAddress
-                        Write-Host "IP Address                 :"$FwAdminIpAddress
+#                        Write-Host "IP Address                 :"$FwAdminIpAddress
                         $FwAdminListeningPort = $SortedArrayFwList.AccesPortNb
-                        Write-Host "Port Number                :"$FwAdminListeningPort
+#                        Write-Host "Port Number                :"$FwAdminListeningPort
                         $EncryptedPassword = $SortedArrayFwList.Password
                         $Password = ConvertTo-SecureString -String $EncryptedPassword
                         $Credentials = New-Object System.Management.Automation.PSCredential ($SortedArrayFwList.LoginName, $Password)
-                        Write-Host "Credentials Login name     : $($Credentials.UserName)"
-                        Write-Host "Credentials Login Password : $($Credentials.GetNetworkCredential().Password)"
+#                        Write-Host "Credentials Login name     : $($Credentials.UserName)"
+#                        Write-Host "Credentials Login Password : $($Credentials.GetNetworkCredential().Password)"
                         $AccessTimeOut = $SortedArrayFwList.TimeOut
-                        Write-Host "Access TimeOut             :"$AccessTimeOut
+#                        Write-Host "Access TimeOut             :"$AccessTimeOut
                         Write-Output "Identifiants pour $SearchedFirewall trouvés !"
                         # Faites quelque chose ici
-                        $FuncURL = BuildURLFunction -FuncFwIP $FwAdminIpAddress -FuncFwPort $FwAdminListeningPort -FuncFwLogin $($Credentials.UserName) -FuncFwPwd $($Credentials.GetNetworkCredential().Password) -UpdateParam $Xml.OuterXml
+#                        $FuncURL = BuildURLFunction -FuncFwIP $FwAdminIpAddress -FuncFwPort $FwAdminListeningPort -FuncFwLogin $($Credentials.UserName) -FuncFwPwd $($Credentials.GetNetworkCredential().Password) -UpdateParam $xmlContent
+                        $FormPayload = BuildURLPayload  -PayloadFwLogin $($Credentials.UserName) -PayloadFwPwd $($Credentials.GetNetworkCredential().Password) -PayloadParameters $xmlContent -PayloadStrLength 8
+                        write-host "Form Payload" $FormPayload 
+#                        $HttpResult = (Invoke-RestMethod -Uri $FuncURL -Method Post -Form $FormPayload -ContentType "application/xml" -SkipCertificateCheck -TimeoutSec $AccessTimeOut)
                        break
                     }
                     catch {
@@ -249,8 +261,6 @@ try
                     write-host "LogFile update"
                     }
                 }
-            $xmlfilepath = "/home/user/test"+$WholeStepCounter+".xml"
-            $xml.Save($xmlfilepath)
             $UrlListNumber++
             }
             $UrlListCounter++
@@ -301,7 +311,7 @@ try
                 }
             }            
             Write-Host ""
-            Write-Host "Firewall Number in "$Input01Value ":" $($FwCounter+1)
+#            Write-Host "Firewall Number in "$Input01Value ":" $($FwCounter+1)
             $FwCounter++
     
         }
