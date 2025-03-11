@@ -5,8 +5,8 @@
 # ---- CLI Parameters ----
 
 param (
-    [parameter(Mandatory = $true)]
-    [string]$InputFileFirewallList = ""
+    [Parameter(Mandatory = $true, HelpMessage = "Please provide Firewalls list file in JSON format :")]
+    [string]$Param01 = ""
 )
 # ---- Functions ----
 function BuildURLFunction {
@@ -24,6 +24,32 @@ function BuildURLFunction {
     $FuncUrlContentType.Add("content-type", "application/xml")
     [string]$WholeCompletedURL = $FuncUrlLogin + $FuncUrlCommand + $FuncUrlEnding
     return $WholeCompletedURL
+}
+function Split-StringAfterEqualSign {
+    param 
+    (
+        [string]$inputString
+    )
+    try {
+        if (-not $inputString.Contains("=")) {
+            throw "Input string does not contain an '=' sign."
+        }
+
+        $splitString = $inputString -split "="
+        #        write-host $splitString[1]
+        if (($null -eq $splitString[1]) -or ($splitString[1] -eq "")) {
+            throw "No value after '=' for $splitString"
+        } 
+        return @{
+            Key   = $splitString[0]
+            Value = $splitString[1]
+        }
+    }
+    catch 
+    {
+        Write-Error "An error occurred : $_"
+        exit 4
+    }
 }
 function TranformInterfacesXmlListToArray {
     param (
