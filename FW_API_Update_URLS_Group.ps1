@@ -65,19 +65,10 @@ function BuildURLFunction
 {
     param (
         [string]$FuncFwIP,
-        [string]$FuncFwPort,
-        [string]$FuncFwLogin,
-        [string]$FuncFwPwd,
-        [string]$FuncFwTimeOut,
-        [string]$UpdateParam
+        [string]$FuncFwPort
     )
-    $TransactionId= GenearateRandomString -NbCharacters 12
-    $FuncUrlLogin = "https://" + $FuncFwIP + ":" + $FuncFwPort + "/webconsole/APIController?reqxml=<Request><Login><Username>" + $FuncFwLogin + "</Username><Password>" + $FuncFwPwd + "</Password></Login>"
-    $FuncUrlCommand = "<SET><WebFilterURLGroup transactionid=$TransactionId>"
-    $FuncUrlEnding = "</WebFilterURLGroup></SET></Request>"
-    $FuncUrlContentType = @{}
-    $FuncUrlContentType.Add("content-type", "application/xml")
-    [string]$WholeCompletedURL = $FuncUrlLogin + $FuncUrlCommand + $UpdateParam + $FuncUrlEnding
+    $FuncUrlLogin = "https://" + $FuncFwIP + ":" + $FuncFwPort + "/webconsole/APIController"
+    [string]$WholeCompletedURL = $FuncUrlLogin
     return $WholeCompletedURL
 }
 
@@ -244,10 +235,24 @@ try
 #                        Write-Host "Access TimeOut             :"$AccessTimeOut
                         Write-Output "Identifiants pour $SearchedFirewall trouvés !"
                         # Faites quelque chose ici
-#                        $FuncURL = BuildURLFunction -FuncFwIP $FwAdminIpAddress -FuncFwPort $FwAdminListeningPort -FuncFwLogin $($Credentials.UserName) -FuncFwPwd $($Credentials.GetNetworkCredential().Password) -UpdateParam $xmlContent
+                        $FuncURL = BuildURLFunction -FuncFwIP $FwAdminIpAddress -FuncFwPort $FwAdminListeningPort 
                         $FormPayload = BuildURLPayload  -PayloadFwLogin $($Credentials.UserName) -PayloadFwPwd $($Credentials.GetNetworkCredential().Password) -PayloadParameters $xmlContent -PayloadStrLength 8
-                        write-host "Form Payload" $FormPayload 
-#                        $HttpResult = (Invoke-RestMethod -Uri $FuncURL -Method Post -Form $FormPayload -ContentType "application/xml" -SkipCertificateCheck -TimeoutSec $AccessTimeOut)
+                       # $PayloadDict = @{$FormPayload}
+                       try 
+                        {
+                        write-host "Form Payload  :" $FormPayload 
+                        write-host "FuncURL Reply :" $FuncURL
+#                        $HttpResult = Invoke-RestMethod -Uri $FuncURL -Method 'Post' -ContentType "application/xml" -SkipCertificateCheck -Body $FormPayload -TimeoutSec $AccessTimeOut
+                        $HttpResult = Invoke-RestMethod -SkipCertificateCheck -Uri $FuncURL -Method "Post" -Body $FormPayload -TimeoutSec $AccessTimeOut                        
+                        $HttpResult
+                        Write-host " Resultat :"$HttpResult
+                        }
+                    catch 
+                        {
+                        Write-host "Error calling URL"
+                        Write-Host "Error : $($_.Exception.Message)"
+                        }
+
                        break
                     }
                     catch {
