@@ -2,7 +2,7 @@
 .SYNOPSIS
 #This script reads a CSV file that contains firewalls list
 .DESCRIPTION
-It reads the following columns : IP ADDRESS, LOGIN NAME, PASSWORD, Access TimeOut in seconds
+It reads the following Informations : IP ADDRESS, LOGIN NAME, PASSWORD, Access TimeOut in seconds
 It outputs the IPHosts of each firewalls mentioned in the list
 It must be used as follows
 .PARAMETER Param01
@@ -10,7 +10,7 @@ Description Input file that lists all details about firewalls that have to be re
 .PARAMETER Param02
 Description Ouptu file that is generated with all details gathered from firewalls. Please provide filename with fullpath access
 .EXAMPLE
-<script_name>.ps1 input=<firewalls list> output=<Generated_IPHostList.json>
+<script_name>.ps1 input=<firewalls list> output=<Generated_Third_Party_Threat_feed_List.json>
 #>
 # ---- CLI Parameters ----
 #
@@ -20,16 +20,16 @@ param (
     # Param01 is firewalls list. 
     [Parameter(Mandatory = $true, HelpMessage = "Please provide Output file name with full path    :")]
     [string]$Param02 = ""
-    # Param02 is the Input JSON file that contains the URL that aree retrieved from each firewall in the list
+    # Param02 is the output JSON file that contains the information related to 3rd party threat feeds that aree retrieved from each firewall in the list
 )
 Clear-Host
 Write-Output "==============================================================================="
-Write-Output "Sophos Firewall API - Retrieve IP Hosts lists"
+Write-Output "Sophos Firewall API - Retrieve Third Party Threat feeds lists"
 Write-Output "==============================================================================="
 Write-Output ""
 Write-Output "It requires 2 parameters : "
 Write-Output ""
-Write-Host $MyInvocation.MyCommand.Name" param01=<firewall_list.json> param02=<IPHost_list.json>" -ForegroundColor Green
+Write-Host $MyInvocation.MyCommand.Name" param01=<firewall_list.json> param02=<Third_Party_Threats_list.json>" -ForegroundColor Green
 Write-Output ""
 
 # ---- Functions ----
@@ -42,7 +42,7 @@ function BuildURLFunction {
         [string]$FuncFwTimeOut
     )
     $FuncUrlLogin = "https://" + $FuncFwIP + ":" + $FuncFwPort + "/webconsole/APIController?reqxml=<Request><Login><Username>" + $FuncFwLogin + "</Username><Password>" + $FuncFwPwd + "</Password></Login><GET>"
-    $FuncUrlCommand = "<IPHost/>"
+    $FuncUrlCommand = "<ThirdPartyFeed/>"
     $FuncUrlEnding = "</GET></Request>"
     $FuncUrlContentType = @{}
     $FuncUrlContentType.Add("content-type", "application/xml")
@@ -79,29 +79,27 @@ function TranformInterfacesXmlListToArray {
     param (
         [xml]$XmlDocument
     )
-    $XmlTag = $XmlDocument.SelectNodes("//IPHost")
+    $XmlTag = $XmlDocument.SelectNodes("//ThirdPartyFeed")
     $OutTagArray = @()
     foreach ($Node in $XmlTag) {
         $OutTag = $Node.OuterXml
         $OutTagArray += [pscustomobject]@{
-            Name              = $Node.Name
-            IPFamilly         = $Node.IPFamilly
-            Description       = $Node.Description
-            HostType          = $Node.HostType
-            IPAddress         = $Node.IPAddress
-            Subnet            = $Node.Subnet
-            StartIPAddress    = $Node.StartIPAddress
-            EndIPAddress      = $Node.EndIPAddress
-            ListOfIpAddresses = $Node.ListOfIpAddresses
-            HostGroupList     = $Node.HostGroupList
+            Id                          = $Node.id
+            Name                        = $Node.Name
+            Description                 = $Node.Description
+            Action                      = $Node.Action
+            IndicatorType               = $Node.IndicatorType
+            ExternalURL                 = $Node.ExternalURL
+            ValidateServerCertificate   = $Node.ValidateServerCertificate
+            PollingInterval             = $Node.PollingInterval
+            Enabled                     = $Node.Enabled
+            Authorization               = $Node.Authorization
         }
     }
     return $OutTagArray
 }
 # ---- Main program ----
 # Checks if firewalls list can exists and can be read
-
-
 try {
     if (($null -eq $Param01) -or ($Param01 -eq "")) {
         Write-Host "   No input firewalls list has been provided   " -ForegroundColor Red -BackgroundColor Yellow -NoNewline
@@ -171,13 +169,14 @@ try {
                         $AccessTimeOut = $Item.TimeOut
 #                        Write-Host "Access TimeOut             :"$AccessTimeOut
                         $FuncURL = BuildURLFunction -FuncFwIP $FwAdminIpAddress -FuncFwPort $FwAdminListeningPort -FuncFwLogin $($Credentials.UserName) -FuncFwPwd $($Credentials.GetNetworkCredential().Password)
-#                        Write-Host $FuncURL
+#                        Write-Host "Built URL request :"$FuncURL
                         try {
                             $HttpResult = (Invoke-RestMethod -Uri $FuncURL -Method Post -ContentType "application/xml" -SkipCertificateCheck -TimeoutSec $AccessTimeOut)
+#                            write-host "Request result :" $HttpResult.OuterXml
                             $EntriesListArray = TranformInterfacesXmlListToArray -XmlDocument $HttpResult
                             $Firewalls_Object = [PSCustomObject]@{
                                 Firewall     = $Item.IPAddress
-                                FirewallURLS = $EntriesListArray
+                                ThreatFeeds  = $EntriesListArray
                             }
                             #                        $Firewalls_Object
                             $MainTable.add($Firewalls_Object) | Out-Null
@@ -218,9 +217,8 @@ catch {
 }
 
 #End of loops
-# $MainTable | Format-Table -AutoSize
+#$MainTable | Format-Table -AutoSize
 $Table_In_JSON = $MainTable | Sort-Object -Property IPAddress | ConvertTo-Json -Depth 6
 #$Table_In_JSON
 $Table_In_JSON | Out-File -FilePath $OutputFile utf8
-
 
