@@ -177,7 +177,7 @@ try {
                             $EntriesListArray = TranformInterfacesXmlListToArray -XmlDocument $HttpResult
                             $Firewalls_Object = [PSCustomObject]@{
                                 Firewall     = $Item.IPAddress
-                                FirewallURLS = $EntriesListArray
+                                IPHosts      = $EntriesListArray
                             }
                             #                        $Firewalls_Object
                             $MainTable.add($Firewalls_Object) | Out-Null
