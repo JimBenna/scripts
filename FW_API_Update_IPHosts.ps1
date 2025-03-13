@@ -82,9 +82,9 @@ function BuildURLPayload
     )
     $TransactionId= GenearateRandomString -NbCharacters $PayloadStrLength
     $PayLoadString = "?reqxml="
-    $PayLoadLogin  = "<Request><Login><Username>"+ $PayloadFwLogin+"</Username><Password>"+$PayloadFwPwd+"</Password></Login>"
-    $PayloadCommand = "<Set><IPHost>"
-    $PayloadlEnding = "</IPHost></Set></Request>"
+    $PayLoadLogin  = "<Request><Login><Username>"+$PayloadFwLogin+"</Username><Password>"+$PayloadFwPwd+"</Password></Login>"
+    $PayloadCommand = "<Set>"
+    $PayloadlEnding = "</Set></Request>"
 
     [string]$WholePayload = $PayLoadString + $PayLoadLogin + $PayloadCommand + $PayloadParameters + $PayloadlEnding
     return $WholePayload
@@ -206,10 +206,11 @@ $ArrayUrlListForFw | Format-Table -Wrap
 #            write-host "Destination firewall        :"$ComputingFw
             # XML content stored in a string
             # Beginning of the string that will compose the XLM entries
-            $xmlContent = "<Name>$UrlListName</Name>"
-            $xmlContent +="<IPFamily>$UrlListIPFamily</IPFamily>"
-            $xmlContent +="<Description>$UrlListDescription</Description>"
-            $xmlContent +="<HostType>$HostType</HostType>"
+            $xmlContent     = "<IPHost>"
+            $xmlContent    += "<Name>$UrlListName</Name>"
+            $xmlContent    +="<IPFamily>$UrlListIPFamily</IPFamily>"
+            $xmlContent    +="<Description>$UrlListDescription</Description>"
+            $xmlContent    +="<HostType>$HostType</HostType>"
             switch ($($HostType)) 
             {
                 "IP" 
@@ -243,6 +244,8 @@ $ArrayUrlListForFw | Format-Table -Wrap
                     $xmlContentObjects+="<HostGroupList>$($ComputingURLList.HostGroupList[$($i)])</HostGroupList>"
                     }
             $xmlContent +=$($xmlContentObjects)
+            $xmlContent +="</IPHost>"
+
 #            write-host "XML Content     :" $xmlContent
             # End of the string
 
@@ -268,18 +271,42 @@ $ArrayUrlListForFw | Format-Table -Wrap
 #                        Write-Host "Access TimeOut             :"$AccessTimeOut
 #                        Write-Output "Identifiants pour $SearchedFirewall trouvés !"
                         # Faites quelque chose ici
-                        $FuncURL = BuildURLFunction -FuncFwIP $FwAdminIpAddress -FuncFwPort $FwAdminListeningPort 
+                        $FuncURL = BuildURLFunction -FuncFwIP $FwAdminIpAddress -FuncFwPort $FwAdminListeningPort
+                        [string]$xmlGroupsContentObjects=""
+                        foreach ($GroupEntry in $ComputingURLList.HostGroupList) 
+                        {
+                            $xmlIPHostGroup ="<IPHostGroup>"
+                            $xmlIPHostGroup +="<Name>$GroupEntry</Name>"
+                            $xmlIPHostGroup +="<IPFamily>$UrlListIPFamily</IPFamily>"
+                            $xmlIPHostGroup +="<Description/>"
+                            $xmlIPHostGroup +="</IPHostGroup>"
+                            $FormPayloadGroups = BuildURLPayload  -PayloadFwLogin $($Credentials.UserName) -PayloadFwPwd $($Credentials.GetNetworkCredential().Password) -PayloadParameters $xmlIPHostGroup -PayloadStrLength 8
+                            $FullIpHostGroupsCreation = $FuncURL+$FormPayloadGroups
+                            try 
+                            {
+#                            write-host "Groups URL :"$FullIpHostGroupsCreation
+                            $HttpGroups = Invoke-RestMethod -Uri $FullIpHostGroupsCreation -Method 'Post' -ContentType "application/xml" -SkipCertificateCheck -TimeoutSec $AccessTimeOut
+                            $HttpGroups.OuterXml
+                            Write-host " Resultat :"$HttpGroups
+                            }
+                            catch 
+                            {
+                            Write-host "Error calling URL"
+                            Write-Host "Error : $($_.Exception.Message)"
+                            } 
+                        }    
                         $FormPayload = BuildURLPayload  -PayloadFwLogin $($Credentials.UserName) -PayloadFwPwd $($Credentials.GetNetworkCredential().Password) -PayloadParameters $xmlContent -PayloadStrLength 8
                        # $PayloadDict = @{$FormPayload}
                        try 
                         {
 #                        write-host "Form Payload  :" $FormPayload 
 #                        write-host "FuncURL Reply :" $FuncURL
+
                         $FullURI = $FuncURL+$FormPayload
 #                        write-host "Complete URL :" $FullURI
 #                        $HttpResult = Invoke-RestMethod -Uri $FuncURL -Method 'Post' -ContentType "application/xml" -SkipCertificateCheck -Body $FormPayload -TimeoutSec $AccessTimeOut
                         #$HttpResult = Invoke-RestMethod -SkipCertificateCheck -Uri $FuncURL -Method "Post" -Body $FormPayload -TimeoutSec $AccessTimeOut                        
-                        $HttpResult = Invoke-RestMethod -Uri $FullURI -Method 'Post' -ContentType "application/xml" -SkipCertificateCheck -Body $FormPayload -TimeoutSec $AccessTimeOut
+                       $HttpResult = Invoke-RestMethod -Uri $FullURI -Method 'Post' -ContentType "application/xml" -SkipCertificateCheck -TimeoutSec $AccessTimeOut
 #                        write-host "URL Passée :" $FullURI
                         $HttpResult.OuterXml
                         Write-host " Resultat :"$HttpResult
