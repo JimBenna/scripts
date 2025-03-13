@@ -219,7 +219,7 @@ catch {
 
 #End of loops
 # $MainTable | Format-Table -AutoSize
-$Table_In_JSON = $MainTable | Sort-Object -Property IPAddress | ConvertTo-Json -Depth 6
+$Table_In_JSON = $MainTable | Sort-Object -Property IPAddress | ConvertTo-Json -Depth 5
 #$Table_In_JSON
 $Table_In_JSON | Out-File -FilePath $OutputFile utf8
 

@@ -1,6 +1,6 @@
 {
   "Firewall": "172.16.16.16",
-  "FirewallURLS": [
+  "IPHosts": [
     {
       "Name": "#Cloudflare DNS 01 IPv4",
       "IPFamilly": "IPv4",

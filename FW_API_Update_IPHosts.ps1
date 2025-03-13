@@ -192,7 +192,7 @@ try
             write-host "Firewall traité   :"$ComputingFw
             write-host "---------------------------------"
             $UrlListCounter = 0
-            foreach ($FirewallURLList in $FirewallEntry[$FwCounter].FirewallURLS)
+            foreach ($FirewallURLList in $FirewallEntry[$FwCounter].IPHosts)
             {
             $ComputingURLList = $FirewallURLList[$UrlListCounter]
             $UrlListNumber = 0
