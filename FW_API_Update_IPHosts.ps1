@@ -179,7 +179,7 @@ try
             $ArrayFwList = @($ImportJsonFwFile)
             $SortedArrayFwList = $ArrayFwList | Sort-Object -Property IPAddress
             $ArrayUrlListForFw = @($ImportJsonURLFile)
-#            $ArrayUrlListForFw
+$ArrayUrlListForFw | Format-Table -Wrap
 #           $SortedArrayFwList
             # Convert table to xml Document
             $FwCounter = 0
@@ -196,24 +196,57 @@ try
             {
             $ComputingURLList = $FirewallURLList[$UrlListCounter]
             $UrlListNumber = 0
-            $EntriesInListNumber = $ComputingURLList[$UrlListNumber].XmlUrlList | Measure-Object | Select-Object -ExpandProperty Count
+#            $EntriesInListNumber = $ComputingURLList[$UrlListNumber].XmlUrlList | Measure-Object | Select-Object -ExpandProperty Count
+            $EntriesInListNumber = $ComputingURLList[$UrlListNumber].HostGroupList | Measure-Object | Select-Object -ExpandProperty Count
             $UrlListName=$ComputingURLList.Name
+            $UrlListIPFamily=$ComputingURLList.IPFamily
+            $UrlListDescription=$ComputingURLList.Description
+            $HostType=$ComputingURLList.HostType
 #            write-host "Number of entries into list :"$UrlListName" :"$EntriesInListNumber
 #            write-host "Destination firewall        :"$ComputingFw
             # XML content stored in a string
             # Beginning of the string that will compose the XLM entries
-            $xmlContentStart = "<Name>$UrlListName</Name>"
+            $xmlContent = "<Name>$UrlListName</Name>"
+            $xmlContent +="<IPFamily>$UrlListIPFamily</IPFamily>"
+            $xmlContent +="<Description>$UrlListDescription</Description>"
+            $xmlContent +="<HostType>$HostType</HostType>"
+            switch ($($HostType)) 
+            {
+                "IP" 
+                        {
+                            $xmlContent +="<IPAddress>$($ComputingURLList.IPAddress)</IPAddress>"
+                        }
+                "IPRange" 
+                        {
+                            $xmlContent +="<StartIPAddress>$($ComputingURLList.startIPaddress)</StartIPAddress>"
+                            $xmlContent +="<EndIPAddress>$($ComputingURLList.endIPaddress)</EndIPAddress>"
+                        }
+                "IPList" 
+                        {
+                            $xmlContent +="<ListOfIPAddresses>$($ComputingURLList.ListOfIPAddresses)</ListOfIPAddresses>"
+                        }
+                "Network" 
+                        {
+                            $xmlContent +="<IPAddress>$($ComputingURLList.IPAddress)</IPAddress>"
+                            $xmlContent +="<Subnet>$($ComputingURLList.Subnet)</Subnet>"
+                        }                                                                              
+                Default {
+                        Write-Error -Message "Parse errror in Record Type"
+                        exit 1
+                        }
+            }
+
             # Iterates to build the list of objects
             [string]$xmlContentObjects=""
             for ($i = 0; $i -lt $EntriesInListNumber; $i++) 
                     {
-                    $xmlContentObjects+="<URL>$($ComputingURLList[$($UrlListNumber)].XmlUrlList[$($i)])</URL>"
+                    $xmlContentObjects+="<HostGroupList>$($ComputingURLList.HostGroupList[$($i)])</HostGroupList>"
                     }
+            $xmlContent +=$($xmlContentObjects)
+#            write-host "XML Content     :" $xmlContent
             # End of the string
-            $xmlContentEnding="<Description>$($ComputingURLList.Description)</Description><URLlist>"
+
             #Build the whole string
-            $xmlContent=$xmlContentStart+$xmlContentEnding+$xmlContentObjects+"</URLlist>"
- #           write-host "URL List : "$xmlContent
             $WholeStepCounter++
 #            write-host "IP Address firewall to update    :"$ComputingFw
             write-host ""
@@ -233,20 +266,21 @@ try
 #                        Write-Host "Credentials Login Password : $($Credentials.GetNetworkCredential().Password)"
                         $AccessTimeOut = $SortedArrayFwList.TimeOut
 #                        Write-Host "Access TimeOut             :"$AccessTimeOut
-                        Write-Output "Identifiants pour $SearchedFirewall trouvés !"
+#                        Write-Output "Identifiants pour $SearchedFirewall trouvés !"
                         # Faites quelque chose ici
                         $FuncURL = BuildURLFunction -FuncFwIP $FwAdminIpAddress -FuncFwPort $FwAdminListeningPort 
                         $FormPayload = BuildURLPayload  -PayloadFwLogin $($Credentials.UserName) -PayloadFwPwd $($Credentials.GetNetworkCredential().Password) -PayloadParameters $xmlContent -PayloadStrLength 8
                        # $PayloadDict = @{$FormPayload}
                        try 
                         {
-                        write-host "Form Payload  :" $FormPayload 
-                        write-host "FuncURL Reply :" $FuncURL
+#                        write-host "Form Payload  :" $FormPayload 
+#                        write-host "FuncURL Reply :" $FuncURL
                         $FullURI = $FuncURL+$FormPayload
+#                        write-host "Complete URL :" $FullURI
 #                        $HttpResult = Invoke-RestMethod -Uri $FuncURL -Method 'Post' -ContentType "application/xml" -SkipCertificateCheck -Body $FormPayload -TimeoutSec $AccessTimeOut
                         #$HttpResult = Invoke-RestMethod -SkipCertificateCheck -Uri $FuncURL -Method "Post" -Body $FormPayload -TimeoutSec $AccessTimeOut                        
-#                        $HttpResult = Invoke-RestMethod -Uri $FullURI -Method 'Post' -ContentType "application/xml" -SkipCertificateCheck -Body $FormPayload -TimeoutSec $AccessTimeOut
-                        write-host "URL Passée :" $FullURI
+                        $HttpResult = Invoke-RestMethod -Uri $FullURI -Method 'Post' -ContentType "application/xml" -SkipCertificateCheck -Body $FormPayload -TimeoutSec $AccessTimeOut
+#                        write-host "URL Passée :" $FullURI
                         $HttpResult.OuterXml
                         Write-host " Resultat :"$HttpResult
                         }
@@ -294,10 +328,9 @@ try
                     #                        Write-Host "Credentials Login Password : $($Credentials.GetNetworkCredential().Password)"
                     $AccessTimeOut = $Item.TimeOut
                     #                        Write-Host "Access TimeOut             :"$AccessTimeOut
-                    $FuncURL = BuildURLFunction -FuncFwIP $FwAdminIpAddress -FuncFwPort $FwAdminListeningPort -FuncFwLogin $($Credentials.UserName) -FuncFwPwd $($Credentials.GetNetworkCredential().Password)
-                    #                        Write-Host $FuncURL
-                    #                try {
-                    #                    $HttpResult = (Invoke-RestMethod -Uri $FuncURL -Method Post -ContentType "application/xml" -SkipCertificateCheck -TimeoutSec $AccessTimeOut)
+#                    $FuncURL = BuildURLFunction -FuncFwIP $FwAdminIpAddress -FuncFwPort $FwAdminListeningPort -FuncFwLogin $($Credentials.UserName) -FuncFwPwd $($Credentials.GetNetworkCredential().Password)
+#                                    try {
+#                                        $HttpResult = (Invoke-RestMethod -Uri $FuncURL -Method Post -ContentType "application/xml" -SkipCertificateCheck -TimeoutSec $AccessTimeOut)
                     #                    $EntriesListArray = TranformInterfacesXmlListToArray -XmlDocument $HttpResult
                     #                    $Firewalls_Object = [PSCustomObject]@{
                     #                        Firewall     = $Item.IPAddress

@@ -85,7 +85,7 @@ function TranformInterfacesXmlListToArray {
         $OutTag = $Node.OuterXml
         $OutTagArray += [pscustomobject]@{
             Name              = $Node.Name
-            IPFamilly         = $Node.IPFamilly
+            IPFamilly         = $Node.IPFamily
             Description       = $Node.Description
             HostType          = $Node.HostType
             IPAddress         = $Node.IPAddress
