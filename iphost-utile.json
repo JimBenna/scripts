@@ -1,29 +1,22 @@
+[
 {
-  "Firewall": "172.16.16.16",
+ "Firewall": "192.168.202.1",
   "IPHosts": [
     {
       "Name": "Cloudflare DNS 01 IPv4",
       "IPFamily": "IPv4",
-      "Description": "Cloudflare’s public DNS resolver number 1",
+      "Description": "Cloudflare public DNS resolver number 1",
       "HostType": "IP",
       "IPAddress": "1.1.1.1",
-      "HostGroupList": [
-	"Cloudflare IPv4 DNS",
-      	"Cloudflare DNS",
-      	"DNS Resolvers",
-      	"Cloudflare DNS Resolver"],
+      "HostGroupList": ["Cloudflare IPv4 DNS","IPv4 DNS Resolvers","IPv4 Cloudflare DNS Resolvers"],
     },
     {
       "Name": "Cloudflare DNS 02 IPv4",
       "IPFamily": "IPv4",
-      "Description": "Cloudflare’s public DNS resolver number 1",
+      "Description": "Cloudflare public DNS resolver number 1",
       "HostType": "IP",
       "IPAddress": "1.0.0.1",
-      "HostGroupList": [
-	"Cloudflare IPv4 DNS",
-	"Cloudflare DNS",
-	"DNS Resolvers",
-	"Cloudflare DNS Resolver"],
+      "HostGroupList": ["Cloudflare IPv4 DNS","IPv4 DNS Resolvers","IPv4 Cloudflare DNS Resolvers"],
     },
     {
       "Name": "Cloudflare Block Malwares DNS 01 IPv4",
@@ -31,11 +24,7 @@
       "Description": "Destinations on the Internet based on the potential threat they pose regarding malware, phishing, or other types of security risks.",
       "HostType": "IP",
       "IPAddress": "1.1.1.2",
-      "HostGroupList": [
-	"Cloudflare IPv4 DNS",
-	"Cloudflare DNS Anti-Malware",
-	"DNS Resolvers",
-	"Cloudflare DNS Resolver"],
+      "HostGroupList": ["Cloudflare IPv4 DNS","Cloudflare IPv4 DNS Anti-Malware","IPv4 DNS Resolvers","IPv4 Cloudflare DNS Resolvers"],
     },
     {
       "Name": "Cloudflare Block Malwares DNS 02 IPv4",
@@ -43,11 +32,7 @@
       "Description": "Destinations on the Internet based on the potential threat they pose regarding malware, phishing, or other types of security risks.",
       "HostType": "IP",
       "IPAddress": "1.0.0.2",
-      "HostGroupList": [
-	"Cloudflare IPv4 DNS",
-	"Cloudflare DNS Anti-Malware",
-	"DNS Resolvers",
-	"Cloudflare DNS Resolver"],
+      "HostGroupList": ["Cloudflare IPv4 DNS","Cloudflare IPv4 DNS Anti-Malware","IPv4 DNS Resolvers","IPv4 Cloudflare DNS Resolvers"],
     },
     {
       "Name": "Cloudflare Block Adult Content and Malwares DNS 01 IPv4",
@@ -55,11 +40,7 @@
       "Description": "Block DNS resolution for sites categorized as Adult Content and Malware",
       "HostType": "IP",
       "IPAddress": "1.1.1.3",
-      "HostGroupList": [
-	"Cloudflare IPv4 DNS",
-	"Cloudflare DNS Anti-Adult",
-	"DNS Resolvers",
-	"Cloudflare DNS Resolver"],
+      "HostGroupList": ["Cloudflare IPv4 DNS","Cloudflare IPv4 DNS Anti-Adult","IPv4 DNS Resolvers","IPv4 Cloudflare DNS Resolvers"],
     },
     {
       "Name": "Cloudflare Block Adult Content and Malwares DNS 02 IPv4",
@@ -67,35 +48,23 @@
       "Description": "Block DNS resolution for sites categorized as Adult Content and Malware",
       "HostType": "IP",
       "IPAddress": "1.0.0.3",
-      "HostGroupList": [
-	"Cloudflare IPv4 DNS",
-	"Cloudflare DNS Anti-Adult",
-	"DNS Resolvers",
-	"Cloudflare DNS Resolver"],
+      "HostGroupList": ["Cloudflare IPv4 DNS","Cloudflare IPv4 DNS Anti-Adult","IPv4 DNS Resolvers","IPv4 Cloudflare DNS Resolvers"],
     },
     {
       "Name": "Cloudflare DNS 01 IPv6",
       "IPFamily": "IPv6",
-      "Description": "Cloudflare’s public DNS resolver number 1",
+      "Description": "Cloudflare public DNS resolver number 1",
       "HostType": "IP",
       "IPAddress": "2606:4700:4700::1111",
-      "HostGroupList": [
-	"Cloudflare IPv6 DNS",
-	"Cloudflare DNS",
-	"DNS Resolvers",
-	"Cloudflare DNS Resolver" ],
+      "HostGroupList": ["Cloudflare IPv6 DNS","IPv6 DNS Resolvers","IPv6 Cloudflare DNS Resolvers"],
     },
     {
       "Name": "Cloudflare DNS 02 IPv6",
       "IPFamily": "IPv6",
-      "Description": "Cloudflare’s public DNS resolver number 1",
+      "Description": "Cloudflare public DNS resolver number 1",
       "HostType": "IP",
       "IPAddress": "2606:4700:4700::1001",
-      "HostGroupList": [
-	"Cloudflare IPv6 DNS",
- 	"Cloudflare DNS",
-	"DNS Resolvers",
-	"Cloudflare DNS Resolver"],
+      "HostGroupList": ["Cloudflare IPv6 DNS","IPv6 DNS Resolvers","IPv6 Cloudflare DNS Resolvers"],
     },
     {
       "Name": "Cloudflare Block Malwares DNS 01 IPv6",
@@ -103,11 +72,7 @@
       "Description": "Destinations on the Internet based on the potential threat they pose regarding malware, phishing, or other types of security risks.",
       "HostType": "IP",
       "IPAddress": "2606:4700:4700::1112",
-      "HostGroupList": [
-	"Cloudflare IPv6 DNS",
-	"Cloudflare DNS Anti-Malware",
-	"DNS Resolvers",
-	"Cloudflare DNS Resolver"],
+      "HostGroupList": ["Cloudflare IPv6 DNS","Cloudflare IPv6 DNS Anti-Malware","IPv6 DNS Resolvers","IPv6 Cloudflare DNS Resolvers"],
     },
     {
       "Name": "Cloudflare Block Malwares DNS 02 IPv6",
@@ -115,11 +80,7 @@
       "Description": "Destinations on the Internet based on the potential threat they pose regarding malware, phishing, or other types of security risks.",
       "HostType": "IP",
       "IPAddress": "2606:4700:4700::1002",
-      "HostGroupList": [
-	"Cloudflare IPv6 DNS",
-	"Cloudflare DNS Anti-Malware",
-	"DNS Resolvers",
-	"Cloudflare DNS Resolver" ],
+      "HostGroupList": ["Cloudflare IPv6 DNS","Cloudflare IPv6 DNS Anti-Malware","IPv6 DNS Resolvers","IPv6 Cloudflare DNS Resolvers"],
     },
     {
       "Name": "Cloudflare Block Adult Content and Malwares DNS 01 IPv6",
@@ -127,11 +88,7 @@
       "Description": "Block DNS resolution for sites categorized as Adult Content and Malware",
       "HostType": "IP",
       "IPAddress": "2606:4700:4700::1113",
-      "HostGroupList": [
-	"Cloudflare IPv6 DNS",
-	"Cloudflare DNS Anti-Adult",
-	"DNS Resolvers",
-	"Cloudflare DNS Resolver" ],
+      "HostGroupList": ["Cloudflare IPv6 DNS","Cloudflare IPv6 DNS Anti-Adult","IPv6 DNS Resolvers","IPv6 Cloudflare DNS Resolvers"],
     },
     {
       "Name": "Cloudflare Block Adult Content and Malwares DNS 02 IPv6",
@@ -139,59 +96,39 @@
       "Description": "Block DNS resolution for sites categorized as Adult Content and Malware",
       "HostType": "IP",
       "IPAddress": "2606:4700:4700::1003",
-      "HostGroupList": [
-	"Cloudflare IPv6 DNS",
-	"Cloudflare DNS Anti-Adult",
-	"DNS Resolvers",
-	"Cloudflare DNS Resolver" ],
+      "HostGroupList": ["Cloudflare IPv6 DNS","Cloudflare IPv6 DNS Anti-Adult","IPv6 DNS Resolvers","IPv6 Cloudflare DNS Resolvers"],
     },
     {
       "Name": "Quad9 DNS 01 IPv4",
       "IPFamily": "IPv4",
-      "Description": "Quad9’s public DNS resolver number 1",
+      "Description": "Quad9 public DNS resolver number 1",
       "HostType": "IP",
       "IPAddress": "9.9.9.9",
-      "HostGroupList": [
-	"Quad9 IPv4 DNS",
-	"Quad9 Normal DNS Resolver",
-	"DNS Resolvers",
-	"Quad9 DNS Resolver" ],
+      "HostGroupList": ["Quad9 IPv4 DNS","Quad9 IPv4 Normal DNS Resolver","IPv4 DNS Resolvers","IPv4 Quad9 DNS Resolvers"],
     },
     {
       "Name": "Quad9 DNS 02 IPv4",
       "IPFamily": "IPv4",
-      "Description": "Quad9’s public DNS resolver number 2",
+      "Description": "Quad9 public DNS resolver number 2",
       "HostType": "IP",
       "IPAddress": "149.112.112.112",
-      "HostGroupList": [
-	"Quad9 IPv4 DNS",
-	"Quad9 Normal DNS Resolver",
-	"DNS Resolvers",
-	"Quad9 DNS Resolver" ],
+      "HostGroupList": ["Quad9 IPv4 DNS","Quad9 IPv4 Normal DNS Resolver","IPv4 DNS Resolvers","IPv4 Quad9 DNS Resolvers"],
     },
     {
       "Name": "Quad9 DNS 01 IPv6",
       "IPFamily": "IPv6",
-      "Description": "Quad9’s public DNS for IPv6 resolver number 1",
+      "Description": "Quad9 public DNS for IPv6 resolver number 1",
       "HostType": "IP",
       "IPAddress": "2620:fe::fe",
-      "HostGroupList": [
-	"Quad9 IPv6 DNS",
-	"Quad9 Normal DNS Resolver",
-	"DNS Resolvers",
-	"Quad9 DNS Resolver" ],
+      "HostGroupList": ["Quad9 IPv6 DNS","Quad9 IPv6 Normal DNS Resolver","IPv6 DNS Resolvers","IPv6 Quad9 DNS Resolvers"],
     },
     {
       "Name": "Quad9 DNS 02 IPv6",
       "IPFamily": "IPv6",
-      "Description": "Quad9’s public DNS for IPv6 resolver number 2",
+      "Description": "Quad9 public DNS for IPv6 resolver number 2",
       "HostType": "IP",
       "IPAddress": "2620:fe::9",
-      "HostGroupList": [
-	"Quad9 IPv6 DNS",
-	"Quad9 Normal DNS Resolver",
-	"DNS Resolvers",
-	"Quad9 DNS Resolver" ],
+      "HostGroupList": ["Quad9 IPv6 DNS","Quad9 IPv6 Normal DNS Resolver","IPv6 DNS Resolvers","IPv6 Quad9 DNS Resolvers"],
     },
     {
       "Name": "Quad9 Block Malwares DNS 01 IPv4",
@@ -199,11 +136,7 @@
       "Description": "DNS resolver number 1 secured with ECS Block threats",
       "HostType": "IP",
       "IPAddress": "9.9.9.11",
-      "HostGroupList": [
-	"Quad9 IPv4 DNS",
-	"Quad9 DNS Anti-Malware",
-	"DNS Resolvers",
-	"Quad9 DNS Resolver"],
+      "HostGroupList": ["Quad9 IPv4 DNS","Quad9 IPv4 DNS Anti-Malware","IPv4 DNS Resolvers","IPv4 Quad9 DNS Resolvers"],
     },
     {
       "Name": "Quad9 Block Malwares DNS 02 IPv4",
@@ -211,11 +144,7 @@
       "Description": "DNS resolver number 2 secured with ECS Block threats",
       "HostType": "IP",
       "IPAddress": "149.112.112.11",
-      "HostGroupList": [
-	"Quad9 IPv4 DNS",
-	"Quad9 DNS Anti-Malware",
-	"DNS Resolvers",
-	"Quad9 DNS Resolver"],
+      "HostGroupList": ["Quad9 IPv4 DNS","Quad9 IPv4 DNS Anti-Malware","IPv4 DNS Resolvers","IPv4 Quad9 DNS Resolvers"],
     },
     {
       "Name": "Quad9 Block Malwares DNS 01 IPv6",
@@ -223,11 +152,7 @@
       "Description": "IPv6 DNS resolver number 1 secured with ECS Block threats",
       "HostType": "IP",
       "IPAddress": "2620:fe::11",
-      "HostGroupList": [
-	"Quad9 IPv6 DNS",
-	"Quad9 DNS Anti-Malware",
-	"DNS Resolvers",
-	"Quad9 DNS Resolver"],
+      "HostGroupList": ["Quad9 IPv6 DNS","Quad9 IPv6 DNS Anti-Malware","IPv6 DNS Resolvers","IPv6 Quad9 DNS Resolvers"],
     },
     {
       "Name": "Quad9 Block Malwares DNS 02 IPv6",
@@ -235,59 +160,43 @@
       "Description": "IPv6 DNS resolver number 2 secured with ECS Block threats",
       "HostType": "IP",
       "IPAddress": "2620:fe::fe:11",
-      "HostGroupList": [
-	"Quad9 IPv6 DNS",
-	"Quad9 DNS Anti-Malware",
-	"DNS Resolvers",
-	"Quad9 DNS Resolver"],
+      "HostGroupList": ["Quad9 IPv6 DNS","Quad9 IPv6 DNS Anti-Malware","IPv6 DNS Resolvers","IPv6 Quad9 DNS Resolvers"],
     },
     {
-      "Name": "RFC 1918 A CLASS",
+      "Name": "RFC 1918 CLASS A",
       "IPFamily": "IPv4",
       "Description": "Private IPv4 Addresses 10.0.0.0/8",
       "HostType": "Network",
       "IPAddress": "10.0.0.0",
-      "Subnet": "255.255.0.0",
-      "HostGroupList": [
-	"Private IP Addresses",
-	"Private IPv4 Addresses",
-	"RFC1918 ranges"],
+      "Subnet": "255.0.0.0",
+      "HostGroupList": ["Private IPv4 Addresses","RFC1918 ranges"],
     },
     {
-      "Name": "RFC 1918 B CLASS",
+      "Name": "RFC 1918 CLASS B",
       "IPFamily": "IPv4",
       "Description": "Private IPv4 Addresses 172.16.0.0/12",
       "HostType": "Network",
       "IPAddress": "172.16.0.0",
       "Subnet": "255.240.0.0",
-      "HostGroupList": [
-	"Private IP Addresses",
-	"Private IPv4 Addresses",
-	"RFC1918 ranges"],
+      "HostGroupList": ["Private IPv4 Addresses","RFC1918 ranges"],
     },
     {
       "Name": "RFC 1918 C CLASS",
       "IPFamily": "IPv4",
       "Description": "Private IPv4 Addresses 192.168.0.0/24",
       "HostType": "Network",
-      "IPAddress": "192.16.0.0",
+      "IPAddress": "192.168.0.0",
       "Subnet": "255.255.255.0",
-      "HostGroupList": [
-	"Private IP Addresses",
-	"Private IPv4 Addresses",
-	"RFC1918 ranges"],
+      "HostGroupList": ["Private IPv4 Addresses","RFC1918 ranges"],
     },
     {
       "Name": "APIPA addresses",
       "IPFamily": "IPv4",
-      "Description": "APIPA : Automatic Private IP Addressing",
+      "Description": "Automatic Private IP Addressing",
       "HostType": "Network",
       "IPAddress": "169.254.0.0",
       "Subnet": "255.255.0.0",
-      "HostGroupList": [
-	"Private IP Addresses",
-	"Private IPv4 Addresses",
-	"APIPA range"],
+      "HostGroupList": ["Private IPv4 Addresses","APIPA range"],
     },
     {
       "Name": "Carrier-grade NAT",
@@ -296,9 +205,7 @@
       "HostType": "Network",
       "IPAddress": "100.64.0.0",
       "Subnet": "255.192.0.0",
-      "HostGroupList": [
-	"Private IP Addresses",
-	"Private IPv4 Addresses"],
+      "HostGroupList": ["Private IPv4 Addresses"],
     },
     {
       "Name": "IETF Protocol Assignments",
@@ -307,9 +214,7 @@
       "HostType": "Network",
       "IPAddress": "192.0.0.0",
       "Subnet": "255.255.255.0",
-      "HostGroupList": [
-	"Private IP Addresses",
-	"Private IPv4 Addresses"],
+      "HostGroupList": ["Private IPv4 Addresses"],
     },
     {
       "Name": "Assigned as TEST-NET1",
@@ -318,10 +223,7 @@
       "HostType": "Network",
       "IPAddress": "192.0.2.0",
       "Subnet": "255.255.255.0",
-      "HostGroupList": [
-	"Private IP Addresses",
-	"Documentation IP Addresses",
-	"Private IPv4 Addresses"],
+      "HostGroupList": ["Documentation IPv4 Addresses","Private IPv4 Addresses"],
     },
     {
       "Name": "Assigned as TEST-NET2",
@@ -330,9 +232,7 @@
       "HostType": "Network",
       "IPAddress": "198.51.100.0",
       "Subnet": "255.255.255.0",
-      "HostGroupList": [
-	"Private IP Addresses",
-	"Private IPv4 Addresses"],
+      "HostGroupList": ["Documentation IPv4 Addresses","Private IPv4 Addresses"],
     },
     {
       "Name": "Assigned as TEST-NET3",
@@ -341,9 +241,7 @@
       "HostType": "Network",
       "IPAddress": "203.0.113.0",
       "Subnet": "255.255.255.0",
-      "HostGroupList": "Private IP Addresses",
-      "HostGroupList": "Documentation IP Addresses",
-      "HostGroupList": "Private IPv4 Addresses"
+      "HostGroupList": ["Documentation IPv4 Addresses","Private IPv4 Addresses"],
     },
     {
       "Name": "CLASS E Net",
@@ -352,10 +250,7 @@
       "HostType": "IPRange",
       "StartIPAddress": "240.0.0.0",
       "EndIPAddress": "255.255.255.254",
-      "HostGroupList": [
-	"Private IP Addresses",
-	"Documentation IP Addresses",
-	"Private IPv4 Addresses"],
+      "HostGroupList": ["Documentation IPv4 Addresses","Private IPv4 Addresses"],
     },
     {
       "Name": "IPv4 to IPv6 relay",
@@ -364,9 +259,7 @@
       "HostType": "Network",
       "IPAddress": "192.88.99.0",
       "Subnet": "255.255.255.0",
-      "HostGroupList": [
-	"Private IP Addresses",
-	"Private IPv4 Addresses"],
+      "HostGroupList": ["Private IPv4 Addresses"],
     },
     {
       "Name": "Benchmark Inter-Network comm Testing",
@@ -375,20 +268,16 @@
       "HostType": "IPRange",
       "StartIPAddress": "198.18.0.0",
       "EndIPAddress": "198.19.255.255",
-      "HostGroupList": [
-	"Private IP Addresses",
-	"Private IPv4 Addresses"],
+      "HostGroupList": ["Private IPv4 Addresses"],
     },
     {
-      "Name": "IPv6 ULA (Unique Local Addresses",
+      "Name": "IPv6 Unique Local Addresses",
       "IPFamily": "IPv6",
       "Description": "These addresses are reserved for local use in home and enterprise environments. IPv6 equivalent to RFC1918",
       "HostType": "Network",
-      "IPAddress": "[:fc00::]",
+      "IPAddress": ":fc00::",
       "Subnet": "/7",
-      "HostGroupList": [
-	"Reserved  Local IPv6 Addresses",
-	"IPv6 Reserved Addresses"],
+      "HostGroupList": ["Reserved  Local IPv6 Addresses","IPv6 Reserved Addresses"],
     },
     {
       "Name": "Internal File Server IPv4",
@@ -396,10 +285,7 @@
       "Description": "This is the IPv4 Address of Internal File Server",
       "HostType": "IP",
       "IPAddress": "192.168.222.52",
-      "HostGroupList": [
-	"Internal Servers Addresses",
-	"Hosts Addresses",
-	"IPv4 Servers Addresses"],
+      "HostGroupList": ["Internal Servers Addresses","Hosts Addresses","IPv4 Servers Addresses"],
     },
     {
       "Name": "Internal File Server IPv6",
@@ -407,10 +293,57 @@
       "Description": "This is the IPv6 Address of Internal File Server",
       "HostType": "IP",
       "IPAddress": "fe80::690d:4168:e348:babe",
-      "HostGroupList": [
-	"Internal Servers Addresses",
-	"Hosts Addresses",
-	"IPv6 Servers Addresses"],
+      "HostGroupList": ["Internal Servers Addresses","Hosts Addresses","IPv6 Servers Addresses"],
     },
-  ]
-}
+  ],
+},
+  {
+    "Firewall": "192.168.201.1",
+     "IPHosts": [
+       {
+         "Name": "Cloudflare DNS 01 IPv4",
+         "IPFamily": "IPv4",
+         "Description": "Cloudflare’s public DNS resolver number 1",
+         "HostType": "IP",
+         "IPAddress": "1.1.1.1",
+         "HostGroupList": ["Cloudflare IPv4 DNS","IPv4 DNS Resolvers","IPv4 Cloudflare DNS Resolvers"],
+       },
+       {
+        "Name": "RFC 1918 CLASS A",
+        "IPFamily": "IPv4",
+        "Description": "Private IPv4 Addresses 10.0.0.0/8",
+        "HostType": "Network",
+        "IPAddress": "10.0.0.0",
+        "Subnet": "255.255.0.0",
+        "HostGroupList": ["Private IPv4 Addresses","RFC1918 ranges"],
+      },
+      {
+        "Name": "RFC 1918 CLASS B",
+        "IPFamily": "IPv4",
+        "Description": "Private IPv4 Addresses 172.16.0.0/12",
+        "HostType": "Network",
+        "IPAddress": "172.16.0.0",
+        "Subnet": "255.240.0.0",
+        "HostGroupList": ["Private IPv4 Addresses","RFC1918 ranges"],
+      },
+      {
+        "Name": "RFC 1918 CLASS C",
+        "IPFamily": "IPv4",
+        "Description": "Private IPv4 Addresses 192.168.0.0/24",
+        "HostType": "Network",
+        "IPAddress": "192.168.0.0",
+        "Subnet": "255.255.255.0",
+        "HostGroupList": ["Private IPv4 Addresses","RFC1918 ranges"],
+      },
+       {
+        "Name": "APIPA addresses",
+        "IPFamily": "IPv4",
+        "Description": "APIPA Automatic Private IP Addressing",
+        "HostType": "Network",
+        "IPAddress": "169.254.0.0",
+        "Subnet": "255.255.0.0",
+        "HostGroupList": ["Private IPv4 Addresses","APIPA range"],
+      },
+    ],
+  }, 
+]
