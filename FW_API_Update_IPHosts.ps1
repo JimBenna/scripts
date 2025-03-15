@@ -85,6 +85,18 @@ function BuildURLPayload {
     [string]$WholePayload = $PayLoadString + $PayLoadLogin + $PayloadCommand + $PayloadParameters + $PayloadlEnding
     return $WholePayload
 }
+function ILookFor
+{
+    param 
+        (
+        [string]$This,
+        [array]$IntoThat
+        )
+    [array]$FoundThat
+    $FoundThat = $IntoThat | Where-Object {$_.IPAddress -eq $This}
+    write-host "Trouvé : "$FoundThat
+    return $FoundThat
+}
 
 try {
     if (($null -eq $Param01) -or ($Param01 -eq "")) {
@@ -166,8 +178,12 @@ try {
 
             $FwCounter = 0
             $WholeStepCounter = 0
+
             foreach ($FirewallEntry in $ArrayUrlListForFw) {
+
                 $ComputingFw = $FirewallEntry[$FwCounter].Firewall
+                $FoundItArray = ILookFor -This $ComputingFw -IntoThat $SortedArrayFwList
+                $FoundItArray
                 write-host ""
                 write-host "---------------------------------"
                 write-host "Firewall traité   :"$ComputingFw
@@ -307,9 +323,9 @@ try {
                                         #                        $HttpResult = Invoke-RestMethod -Uri $FuncURL -Method 'Post' -ContentType "application/xml" -SkipCertificateCheck -Body $FormPayload -TimeoutSec $AccessTimeOut
                                         write-host "URL Passée :" $FullURI
                                         write-host "-------------------------------------"  
-                                        $HttpResult = Invoke-RestMethod -Uri $FullURI -Method 'Post' -ContentType "application/xml" -SkipCertificateCheck -TimeoutSec $AccessTimeOut -StatusCodeVariable IPHostURLReply
+#                                        $HttpResult = Invoke-RestMethod -Uri $FullURI -Method 'Post' -ContentType "application/xml" -SkipCertificateCheck -TimeoutSec $AccessTimeOut -StatusCodeVariable IPHostURLReply
 #                                        $HttpResult.OuterXml
-                                        $SelectedIPHostsTags = $HttpResult | Select-Xml -XPath "//Login | //IPHost"
+#                                        $SelectedIPHostsTags = $HttpResult | Select-Xml -XPath "//Login | //IPHost"
                                         write-host "Communication with IP :" $FwAdminIpAddress
                                         write-host "Creation of IP Host   :" $UrlListName
                                         write-host "Reply Status Code     :" $IPHostURLReply
