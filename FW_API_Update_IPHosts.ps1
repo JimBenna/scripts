@@ -196,7 +196,7 @@ try {
                 }
                 $UniqueHostGroupListArray = $EveryHostGroupList | Group-Object -Property ListName |  ForEach-Object { $_.Group | Select-Object -First 1 }
                 #            $UniqueHostGroupListArray | Format-Table -Wrap
-                foreach ($GroupEntry in $global:UniqueHostGroupListArray) {
+                foreach ($GroupEntry in $UniqueHostGroupListArray) {
                     $xmlIPHostGroup = "<IPHostGroup>"
                     $xmlIPHostGroup += "<Name>$($GroupEntry.ListName)</Name>"
                     $xmlIPHostGroup += "<IPFamily>$($GroupEntry.IPFamily)</IPFamily>"
