@@ -1,16 +1,15 @@
 <# 
 .SYNOPSIS
-#This script reads a CSV file that contains firewalls list
+#This script reads a JSON file that contains The X-OPS Setup
 .DESCRIPTION
 It reads the following columns : IP ADDRESS, LOGIN NAME, PASSWORD, Access TimeOut in seconds
-It outputs the IPHosts of each firewalls mentioned in the list
 It must be used as follows
 .PARAMETER Param01
 Description Input file that lists all details about firewalls that have to be requested. Please provide filename with fullpath access
 .PARAMETER Param02
-Description Ouptu file that is generated with all details gathered from firewalls. Please provide filename with fullpath access
+Description Ouput file that is generated with all details gathered from firewalls. Please provide filename with fullpath access
 .EXAMPLE
-<script_name>.ps1 input=<firewalls list> output=<Generated_IPHostList.json>
+<script_name>.ps1 input=<firewalls list> output=<Generated_xops_setup.json>
 #>
 # ---- CLI Parameters ----
 #
@@ -23,9 +22,9 @@ param (
     # Param02 is the Input JSON file that contains the URL that aree retrieved from each firewall in the list
 )
 Clear-Host
-Write-Output "==============================================================================="
-Write-Output "Sophos Firewall API - Retrieve Sophs X-OPS Threat Feeds Status"
-Write-Output "==============================================================================="
+Write-Output "============================================================="
+Write-Output "Sophos Firewall API - Retrieve Sophs X-OPS Threat Feeds Setup"
+Write-Output "============================================================="
 Write-Output ""
 Write-Output "It requires 2 parameters : "
 Write-Output ""
@@ -66,8 +65,7 @@ function Split-StringAfterEqualSign {
             Value = $splitString[1]
         }
     }
-    catch 
-    {
+    catch {
         Write-Error "An error occurred : $_"
         exit 4
     }
@@ -81,11 +79,11 @@ function TranformInterfacesXmlListToArray {
     foreach ($Node in $XmlTag) {
         $OutTag = $Node.OuterXml
         $OutTagArray = @{    
-            ThreatProtectionStatus  = $Node.ThreatProtectionStatus
-            Policy                  = $Node.Policy
-            HostException           = $Node.HostException.InnerText -replace "`n", "," -replace '^\s+|\s+$',''
-            ThreatException         = $Node.ThreatException.InnerText -replace "`n", "" -replace '^,|,\s+' , ','
-            InspectContent          = $Node.InspectContent
+            ThreatProtectionStatus = $Node.ThreatProtectionStatus
+            Policy                 = $Node.Policy
+            HostException          = $Node.HostException.InnerText -replace "`n", "," -replace '^\s+|\s+$', ''
+            ThreatException        = $Node.ThreatException.InnerText -replace "`n", "" -replace '^,|,\s+' , ','
+            InspectContent         = $Node.InspectContent
         }
     }
 
@@ -95,8 +93,7 @@ function TranformInterfacesXmlListToArray {
 # Checks if firewalls list can exists and can be read
 
 
-try 
-{
+try {
     if (($null -eq $Param01) -or ($Param01 -eq "")) {
         Write-Host "   No input firewalls list has been provided   " -ForegroundColor Red -BackgroundColor Yellow -NoNewline
         write-host""
@@ -109,12 +106,12 @@ try
         write-host""        
         exit 3
     }
-#    if (($null -eq $Param03) -or ($Param03 -eq "")) {
-#        Write-Host "   No Output log file list has been provided   " -ForegroundColor Red -BackgroundColor Yellow -NoNewline
-#        write-host""
-#        write-host""        
-#        exit 4
-#    }
+    #    if (($null -eq $Param03) -or ($Param03 -eq "")) {
+    #        Write-Host "   No Output log file list has been provided   " -ForegroundColor Red -BackgroundColor Yellow -NoNewline
+    #        write-host""
+    #        write-host""        
+    #        exit 4
+    #    }
     else {
         #
         # ALL Is OK now we can compute. 
@@ -136,88 +133,71 @@ try
         #        Write-Host "Second Parameter name : "$Input02Name
         #        Write-Host "Output Filename       : "$Input02Value
         #        $result03 = Split-StringAfterEqualSign -inputString $Param03
-#        Write-Host "Param03 Name        : "$result03.Key
-#        Write-Host "Param03 content     : "$result03.Value
-#        $Input03Name = $result03.key
-#        $Input03Value = $result03.Value          
+        #        Write-Host "Param03 Name        : "$result03.Key
+        #        Write-Host "Param03 content     : "$result03.Value
+        #        $Input03Name = $result03.key
+        #        $Input03Value = $result03.Value          
         $OutputFile = $Input02Value
         if (Test-Path -Path $InputFile) {
             # Input file exists, we can continue
-            try 
-            {
+            try {
                 $file = Get-Item $InputFile
                 $file.OpenRead().Close()
                 $ImportJsonFile = Get-content -Path $InputFile | ConvertFrom-Json
                 $Counter = 0
                 $MainTable = [System.Collections.ArrayList]::new()
-#                $MainTable  = New-Object System.Data.Datatable
-#                [void]$MainTable.Columns.Add("Firewall"),
-#                [void]$MainTable.Columns.Add("ThreatProtectionStatus"),
-#                [void]$MainTable.Columns.Add("InspectContent"),
-#                [void]$MainTable.Columns.Add("Policy"),
-#                [void]$MainTable.Columns.Add("HostException"),
-#                [void]$MainTable.Columns.Add("ThreatException")
-
-                foreach ($Item in $ImportJsonFile) 
-                {
-                    try 
-                    {
-#                        Write-Host "---------------------------------------------------------"
-#                        Write-Host "Iteration Number           :"$Counter
+                foreach ($Item in $ImportJsonFile) {
+                    try {
+                        #                        Write-Host "---------------------------------------------------------"
+                        #                        Write-Host "Iteration Number           :"$Counter
                         $FwAdminIpAddress = $Item.IPAddress
-#                        Write-Host "IP Address                 :"$FwAdminIpAddress
+                        #                        Write-Host "IP Address                 :"$FwAdminIpAddress
                         $FwAdminListeningPort = $Item.AccesPortNb
-#                        Write-Host "Port Number                :"$FwAdminListeningPort
+                        #                        Write-Host "Port Number                :"$FwAdminListeningPort
                         $EncryptedPassword = $Item.Password
                         $Password = ConvertTo-SecureString -String $EncryptedPassword
                         $Credentials = New-Object System.Management.Automation.PSCredential ($Item.LoginName, $Password)
-#                        Write-Host "Credentials Login name     : $($Credentials.UserName)"
-#                        Write-Host "Credentials Login Password : $($Credentials.GetNetworkCredential().Password)"
+                        #                        Write-Host "Credentials Login name     : $($Credentials.UserName)"
+                        #                        Write-Host "Credentials Login Password : $($Credentials.GetNetworkCredential().Password)"
                         $AccessTimeOut = $Item.TimeOut
-#                        Write-Host "Access TimeOut             :"$AccessTimeOut
+                        #                        Write-Host "Access TimeOut             :"$AccessTimeOut
                         $FuncURL = BuildURLFunction -FuncFwIP $FwAdminIpAddress -FuncFwPort $FwAdminListeningPort -FuncFwLogin $($Credentials.UserName) -FuncFwPwd $($Credentials.GetNetworkCredential().Password)
                         Write-Host $FuncURL
-                        try 
-                        {
+                        try {
                             $HttpResult = (Invoke-RestMethod -Uri $FuncURL -Method Post -ContentType "application/xml" -SkipCertificateCheck -TimeoutSec $AccessTimeOut)
-#                            $XmlContent = $HttpResult.OuterXml
+                            #                            $XmlContent = $HttpResult.OuterXml
                             [xml]$XmlContent = $HttpResult
-#                            write-host "Xml Content :" $XmlContent
-#                            write-host "HTTP Result :"$HttpResult
-#                            $EntriesListArray = TranformInterfacesXmlListToArray -XmlDocument $HttpResult
+                            #                            write-host "Xml Content :" $XmlContent
+                            #                            write-host "HTTP Result :"$HttpResult
+                            #                            $EntriesListArray = TranformInterfacesXmlListToArray -XmlDocument $HttpResult
                             
                             $ValuesAtpTable = TranformInterfacesXmlListToArray -XmlDocument $HttpResult
                             $ValuesAtpTable | Format-Table -Wrap
                             $MainTable = @()
-                            foreach ($Name in $ValuesAtpTable)
-                            {
-$MainTable += [PSCustomObject]@{
-    Firewall    = $FwAdminIpAddress
-    ATPValues   = $Name
-}
+                            foreach ($Name in $ValuesAtpTable) {
+                                $MainTable += [PSCustomObject]@{
+                                    Firewall  = $FwAdminIpAddress
+                                    ATPValues = $Name
+                                }
                             }
 
 
-                       }
-                        catch 
-                        {
+                        }
+                        catch {
                             Write-host "Error calling URL"
                             Write-Host "Error : $($_.Exception.Message)"
                         }
                     }
-                    catch 
-                    {
+                    catch {
                         Write-Host "Error encountered while parsing "$InputFile
                         Write-Host "Error $($_.Exception.Message)"
                         exit 1
                     }
                 }            
-                #            Write-Host ""
+
                 $Counter++
-#                Write-Host "Compteur :" $Counter
             }
-            catch 
-            {
+            catch {
                 Write-Host "File "$FullFileName" exists but can not be accessed in Read mode"
                 exit 2               
             }
@@ -238,10 +218,9 @@ catch {
 }
 
 #End of loops
- $MainTable | Format-Table -AutoSize
-$Table_In_JSON
-$Table_In_JSON = $($MainTable)| ConvertTo-Json -Depth 1 -EnumsAsStrings
-write-host $Table_In_JSON
+# $MainTable | Format-Table -AutoSize
+$Table_In_JSON = $($MainTable) | ConvertTo-Json -Depth 1 -EnumsAsStrings
+# write-host $Table_In_JSON
 $Table_In_JSON | Out-File -FilePath $OutputFile utf8
 
 
