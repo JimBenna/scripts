@@ -1,0 +1,33 @@
+// Template to push Sophos XOPS Setup to firewall(s)
+// It is structured as follow.
+//{
+//  "Firewall": "<IP Address of the firewall #01",
+//  "ATPValues": {
+//    "ThreatProtectionStatus": "<Enable/Disable>",
+//    "ThreatException": ["<Destination_ip_or domain name #01>","<Destination_ip_or domain name #02>"],
+//    "Policy": "<Log Only/Log and Drop>",
+//    "HostException": ["<Source Network_or Host #01>","<Source Network_or Host #02>"],
+//    "InspectContent": "<all/untrusted>"
+//  }
+//}
+// Examples 
+//{
+//  "Firewall": "172.16.16.16",
+//  "ATPValues": {
+//    "ThreatProtectionStatus": "Enable",
+//    "ThreatException": ["222.333.4.5",<Destination_ip_or domain name #02>],
+//    "Policy": "<Log and Drop>",
+//    "HostException": ["172.16.24.1","Workstation 01"],
+//    "InspectContent": "untrusted"
+//  }
+//}
+{
+  "Firewall": "172.16.16.16",
+  "ATPValues": {
+   "ThreatProtectionStatus": "Enable",
+   "ThreatException": ["222.333.4.5","example.com"],
+    "Policy": "Log and Drop",
+    "HostException": ["172.16.24.1","Workstation 01"],
+    "InspectContent": "untrusted",
+  }
+}
