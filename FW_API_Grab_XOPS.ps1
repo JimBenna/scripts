@@ -81,8 +81,8 @@ function TranformInterfacesXmlListToArray {
         $OutTagArray = @{    
             ThreatProtectionStatus = $Node.ThreatProtectionStatus
             Policy                 = $Node.Policy
-            HostException          = $Node.HostException.InnerText -replace "`n", "," -replace '^\s+|\s+$', ''
-            ThreatException        = $Node.ThreatException.InnerText -replace "`n", "" -replace '^,|,\s+' , ','
+            HostException          = $Node.HostException.Host
+            ThreatException        = $Node.ThreatException.Threat
             InspectContent         = $Node.InspectContent
         }
     }
@@ -162,7 +162,7 @@ try {
                         $AccessTimeOut = $Item.TimeOut
                         #                        Write-Host "Access TimeOut             :"$AccessTimeOut
                         $FuncURL = BuildURLFunction -FuncFwIP $FwAdminIpAddress -FuncFwPort $FwAdminListeningPort -FuncFwLogin $($Credentials.UserName) -FuncFwPwd $($Credentials.GetNetworkCredential().Password)
-                        Write-Host $FuncURL
+#                        Write-Host $FuncURL
                         try {
                             $HttpResult = (Invoke-RestMethod -Uri $FuncURL -Method Post -ContentType "application/xml" -SkipCertificateCheck -TimeoutSec $AccessTimeOut)
                             #                            $XmlContent = $HttpResult.OuterXml
@@ -172,7 +172,6 @@ try {
                             #                            $EntriesListArray = TranformInterfacesXmlListToArray -XmlDocument $HttpResult
                             
                             $ValuesAtpTable = TranformInterfacesXmlListToArray -XmlDocument $HttpResult
-                            $ValuesAtpTable | Format-Table -Wrap
                             $MainTable = @()
                             foreach ($Name in $ValuesAtpTable) {
                                 $MainTable += [PSCustomObject]@{
@@ -218,8 +217,8 @@ catch {
 }
 
 #End of loops
-# $MainTable | Format-Table -AutoSize
-$Table_In_JSON = $($MainTable) | ConvertTo-Json -Depth 1 -EnumsAsStrings
+#$MainTable | Format-Table -AutoSize
+$Table_In_JSON = $($MainTable) | ConvertTo-Json -Depth 2
 # write-host $Table_In_JSON
 $Table_In_JSON | Out-File -FilePath $OutputFile utf8
 
