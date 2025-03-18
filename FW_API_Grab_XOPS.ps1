@@ -77,19 +77,18 @@ function TranformInterfacesXmlListToArray {
         [xml]$XmlDocument
     )
     $XmlTag = $XmlDocument.SelectNodes("//ATP")
-    $XmlTag.OuterXml
     $OutTagArray = @()
     foreach ($Node in $XmlTag) {
         $OutTag = $Node.OuterXml
-        $OutTagArray += [pscustomobject]@{
+        $OutTagArray = @{    
             ThreatProtectionStatus  = $Node.ThreatProtectionStatus
             Policy                  = $Node.Policy
-            HostException           = $Node.HostException
-            ThreatException         = $Node.ThreatException
+            HostException           = $Node.HostException.InnerText -replace "`n", "," -replace '^\s+|\s+$',''
+            ThreatException         = $Node.ThreatException.InnerText -replace "`n", "" -replace '^,|,\s+' , ','
             InspectContent          = $Node.InspectContent
         }
     }
-    $OutTagArray | Format-Table -AutoSize
+
     return $OutTagArray
 }
 # ---- Main program ----
@@ -150,14 +149,15 @@ try
                 $file.OpenRead().Close()
                 $ImportJsonFile = Get-content -Path $InputFile | ConvertFrom-Json
                 $Counter = 0
-#                $MainTable = [System.Collections.ArrayList]::new()
-                $MainTable  = New-Object System.Data.Datatable
-                [void]$MainTable.Columns.Add("Firewall"),
-                [void]$MainTable.Columns.Add("ThreatProtectionStatus"),
-                [void]$MainTable.Columns.Add("Policy"),
-                [void]$MainTable.Columns.Add("HostException"),
-                [void]$MainTable.Columns.Add("ThreatException"),
-                [void]$MainTable.Columns.Add("InspectContent")
+                $MainTable = [System.Collections.ArrayList]::new()
+#                $MainTable  = New-Object System.Data.Datatable
+#                [void]$MainTable.Columns.Add("Firewall"),
+#                [void]$MainTable.Columns.Add("ThreatProtectionStatus"),
+#                [void]$MainTable.Columns.Add("InspectContent"),
+#                [void]$MainTable.Columns.Add("Policy"),
+#                [void]$MainTable.Columns.Add("HostException"),
+#                [void]$MainTable.Columns.Add("ThreatException")
+
                 foreach ($Item in $ImportJsonFile) 
                 {
                     try 
@@ -182,25 +182,23 @@ try
                             $HttpResult = (Invoke-RestMethod -Uri $FuncURL -Method Post -ContentType "application/xml" -SkipCertificateCheck -TimeoutSec $AccessTimeOut)
 #                            $XmlContent = $HttpResult.OuterXml
                             [xml]$XmlContent = $HttpResult
-                            write-host "Xml Content :" $XmlContent.ThreatProtectionStatus.OuterXml
-                            write-host "Texte :"$XmlContent.ThreatProtectionStatus
+#                            write-host "Xml Content :" $XmlContent
+#                            write-host "HTTP Result :"$HttpResult
+#                            $EntriesListArray = TranformInterfacesXmlListToArray -XmlDocument $HttpResult
+                            
+                            $ValuesAtpTable = TranformInterfacesXmlListToArray -XmlDocument $HttpResult
+                            $ValuesAtpTable | Format-Table -Wrap
+                            $MainTable = @()
+                            foreach ($Name in $ValuesAtpTable)
+                            {
+$MainTable += [PSCustomObject]@{
+    Firewall    = $FwAdminIpAddress
+    ATPValues   = $Name
+}
+                            }
 
-#                            $SelectedTags = $HttpResuuult | Select-Xml -XPath "//Login | //IPHostGroup"
-                            $SelectedTags = $HttpResult | Select-Xml -XPath "//ATP"
-# write-host $SelectedTags
 
-#                            $AtpStatus              = $HttpResult | Select-Xml -XPath "//ThreatProtectionStatus"
-$AtpStatus              = $HttpResult.SelectNodes("//ThreatProtectionStatus")
-                            $AtpPolicy              = $HttpResult | Select-Xml -XPath "//Policy"
-                            $AtpInspectionRule      = $HttpResult | Select-Xml -XPath "//InspectContent"
-                            $AtpHostsExceptionList  = $HttpResult | Select-Xml -XPath "//HostException"
-                            $AtpThreatExceptionList = $HttpResult | Select-Xml -XPath "//ThreatException"
-
-#                            write-host $HttpResult
-#                            write-host $XmlContent
-                            [void]$Maintable.Rows.Add($($FwAdminIpAddress),$($AtpStatus),$($AtpPolicy),$($AtpInspectionRule),$($AtpHostsExceptionList),$($AtpThreatExceptionList))
-#                            $Maintable=@($($FwAdminIpAddress),$($AtpStatus),$($AtpPolicy),$($AtpInspectionRule),$($AtpHostsExceptionList),$($AtpThreatExceptionList))                            
-                        }
+                       }
                         catch 
                         {
                             Write-host "Error calling URL"
@@ -241,9 +239,9 @@ catch {
 
 #End of loops
  $MainTable | Format-Table -AutoSize
-# $Table_In_JSON=$null
- $Table_In_JSON = $MainTable | ConvertTo-Json -Depth 2
-
-#$Table_In_JSON | Out-File -FilePath $OutputFile utf8
+$Table_In_JSON
+$Table_In_JSON = $($MainTable)| ConvertTo-Json -Depth 1 -EnumsAsStrings
+write-host $Table_In_JSON
+$Table_In_JSON | Out-File -FilePath $OutputFile utf8
 
 
