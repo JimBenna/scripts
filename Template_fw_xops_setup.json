@@ -1,13 +1,20 @@
 // Template to push Sophos XOPS Setup to firewall(s)
 // It is structured as follow.
 //{
-//  "Firewall": "<IP Address of the firewall #01",
+//  "Firewall": "172.16.16.16",
 //  "ATPValues": {
-//    "ThreatProtectionStatus": "<Enable/Disable>",
-//    "ThreatException": ["<Destination_ip_or domain name #01>","<Destination_ip_or domain name #02>"],
-//    "Policy": "<Log Only/Log and Drop>",
-//    "HostException": ["<Source Network_or Host #01>","<Source Network_or Host #02>"],
-//    "InspectContent": "<all/untrusted>"
+//    "InspectContent": "all",
+//    "ThreatProtectionStatus": "Enable",
+//    "HostException": [
+//      "Quad9 DNS 02 IPv4",
+//      "RFC 1918 A CLASS",
+//      "RFC 1918 B CLASS"
+//    ],
+//    "ThreatException": [
+//      "8.8.8.8",
+//      "menaces-a-exclure.net"
+//    ],
+//    "Policy": "Log and Drop"
 //  }
 //}
 // Examples 
@@ -24,10 +31,17 @@
 {
   "Firewall": "172.16.16.16",
   "ATPValues": {
-   "ThreatProtectionStatus": "Enable",
-   "ThreatException": ["222.333.4.5","example.com"],
-    "Policy": "Log and Drop",
-    "HostException": ["172.16.24.1","Workstation 01"],
-    "InspectContent": "untrusted",
+    "InspectContent": "all",
+    "ThreatProtectionStatus": "Enable",
+    "HostException": [
+      "Quad9 DNS 02 IPv4",
+      "RFC 1918 A CLASS",
+      "RFC 1918 B CLASS"
+    ],
+    "ThreatException": [
+      "8.8.8.8",
+      "menaces-a-exclure.net"
+    ],
+    "Policy": "Log and Drop"
   }
 }
