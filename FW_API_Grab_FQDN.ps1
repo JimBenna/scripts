@@ -171,8 +171,8 @@ try {
                             $HttpResult = (Invoke-RestMethod -Uri $FuncURL -Method Post -ContentType "application/xml" -SkipCertificateCheck -TimeoutSec $AccessTimeOut)
                             $EntriesListArray = TranformInterfacesXmlListToArray -XmlDocument $HttpResult
                             $Firewalls_Object = [PSCustomObject]@{
-                                Firewall     = $Item.IPAddress
-                                IPHosts      = $EntriesListArray
+                                Firewall        = $Item.IPAddress
+                                FQDN            = $EntriesListArray
                             }
                             #                        $Firewalls_Object
                             $MainTable.add($Firewalls_Object) | Out-Null
