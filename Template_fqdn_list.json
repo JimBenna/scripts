@@ -1,0 +1,27 @@
+// Template to create FQDN and FQDN Groups at the same time
+//{
+//  "Firewall": "172.16.16.16",
+//  "FQDN": [
+//    {
+//      "Name": "<FQDN Name>",
+//      "Description": "",
+//      "FQDN": "*.domain-name.net",
+//      "FQDNHostGroupList": [
+//        "Group 01",
+//        "Group 02",
+//        "Group 03"
+//      ],
+//    },
+//    {
+//      "Name": "<FQDN Name 02>",
+//      "Description": "",
+//      "FQDN": "*.other-domain.com",
+//      "FQDNHostGroupList": [
+//        "Group 01",
+//        "Group 04",
+//        "Group 05",
+//	  "Group 02"
+//      ],
+//    },
+//  ]
+//}
