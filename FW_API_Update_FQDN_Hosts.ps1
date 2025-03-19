@@ -179,8 +179,9 @@ try {
 #            Write-host "Tableau des details des fw :"$global:SortedArrayFwList
 #            write-host "Tableau des paramètres     :"$global:SortedArrayUrlListForFw
 #            Write-host "Entrée de Fw               :"$FirewallEntry.Firewall
-                $FoundItArray = @{}
-                $FoundItArray = $global:SortedArrayUrlListForFw | Where-Object { $_.Firewall -eq $FirewallEntry.Firewall }
+            $FoundItArray = @{}
+            $FoundItArray = $global:SortedArrayUrlListForFw | Where-Object { $_.Firewall -eq $FirewallEntry.Firewall }
+            write-host "*********************** [ FQDN Group creation Process ] **************************************"
             write-host ""
             write-host "---------------------------------"
             write-host "Firewall traité   :"$FoundItArray.Firewall
@@ -189,12 +190,17 @@ try {
                 $EveryFQDNGroupList = New-Object System.Data.Datatable
                 [void]$EveryFQDNGroupList.Columns.Add("FQDNGroupName")
                 foreach ($GroupListName in $FoundItArray.FQDN) {
-                    foreach ($List in $GroupListName.FQDNHostGroupList) {
+                    foreach ($List in $GroupListName.FQDNHostGroupList) 
+                    {
                         [void]$EveryFQDNGroupList.Rows.Add($($List))
                     }
                 }
                 $UniqueHostGroupListArray = $EveryFQDNGroupList | Group-Object -Property FQDNGroupName |  ForEach-Object { $_.Group | Select-Object -First 1 }
-                $UniqueHostGroupListArray | Format-Table -Wrap
+#                $UniqueHostGroupListArray | Format-Table -Wrap
+                write-host ""
+                write-host "---------------------------------"
+                write-host "Firewall traité   :"$FoundItArray.Firewall
+                write-host "---------------------------------"
                 foreach ($GroupEntry in $UniqueHostGroupListArray) {
                     $xmlIPHostGroup = "<FQDNHostGroup>"
                     $xmlIPHostGroup += "<Name>$($GroupEntry.FQDNGroupName)</Name>"
@@ -208,15 +214,16 @@ try {
                     $local:FormPayloadGroups = BuildURLPayload -PayloadFwLogin $($local:Credentials.UserName) -PayloadFwPwd $($local:Credentials.GetNetworkCredential().Password) -PayloadParameters $xmlIPHostGroup -PayloadStrLength 8
                     $local:FullIpHostGroupsCreation = $local:FuncURL + $local:FormPayloadGroups
                     try {
-                        write-host "Groups URL :"$local:FullIpHostGroupsCreation
-#                        $HttpGroups = Invoke-RestMethod -Uri $local:FullIpHostGroupsCreation -Method 'Post' -ContentType "application/xml" -SkipCertificateCheck -TimeoutSec $AccessTimeOut -StatusCodeVariable HostGroupURLReply
-#                        $HttpGroups.OuterXml
-                        #                   $SelectedTags = $HttpGroups | Select-Xml -XPath "//Login | //IPHostGroup"
-                        #                   $SelectedTags | ForEach-Object {$_.Node.InnerText}
+#                        write-host "Groups URL :"$local:FullIpHostGroupsCreation
+                        $FQDNGroups = Invoke-RestMethod -Uri $local:FullIpHostGroupsCreation -Method 'Post' -ContentType "application/xml" -SkipCertificateCheck -TimeoutSec $AccessTimeOut -StatusCodeVariable HostGroupURLReply
+#                        $FQDNGroups.OuterXml
+
                         write-host "Communication with IP   :" $DestinationFirewall.IPAddress
                         write-host "Creation of Hosts Group :" $($GroupEntry.FQDNGroupName)
                         write-host "Reply Status Code       :" $HostGroupURLReply
-                        #                    $SelectedIPHostsTags | ForEach-Object {$_.Node.InnerText}
+                        $SelectedTags = $FQDNGroups | Select-Xml -XPath "//Login | //Status"
+                        $SelectedTags | ForEach-Object {$_.Node.InnerText}
+
                         write-host "----------------------------------------------"
                     }
                     catch {
@@ -232,87 +239,68 @@ try {
             #$SortedArrayUrlListForFw | Format-Table -AutoSize
             #$SortedArrayFwList | Format-Table -AutoSize
 
-#            foreach ($ComputingFw in $SortedArrayUrlListForFw) 
-#            {
-#                write-host "*********************** [ IP Hosts Creation Process ] **************************************"
-#                #    $ComputingFw | Format-Table -Wrap
-#                $TotalNumberOfIPHosts = $ComputingFw.IPHosts | Measure-Object | Select-Object -ExpandProperty Count
-#                for ($h = 0; $h -lt $TotalNumberOfIPHosts; $h++) {
+            foreach ($ComputingFw in $SortedArrayUrlListForFw) 
+            {
+                write-host "*********************** [ FQDN Creation Process ] **************************************"
+#                $ComputingFw | Format-Table -Wrap
+                $TotalNumberOfFQDN = $ComputingFw.FQDN | Measure-Object | Select-Object -ExpandProperty Count
+#                write-host "FQDN number :"  $TotalNumberOfFQDN
+                for ($fqdn = 0; $fqdn -lt $TotalNumberOfFQDN; $fqdn++) {
 #                    write-host "Destination firewall        :"$ComputingFw.Firewall
-#                    $xmlContent = "<IPHost>"
-#                    $UrlListName = $($ComputingFw.IPHosts[$h].Name)
-#                    $xmlContent += "<Name>$UrlListName</Name>"
-#                    write-host "Firewall URL List           :"$URLListName
-#                    $UrlListIPFamily = $($ComputingFw.IPHosts[$h].IPFamily)
-#                    $xmlContent += "<IPFamily>$UrlListIPFamily</IPFamily>"
-#                    write-host "IP Family                   :"$UrlListIPFamily                    
-#                    $UrlListDescription = $($ComputingFw.IPHosts[$h].Description)
-#                    $xmlContent += "<Description>$UrlListDescription</Description>"
-#                    write-host "Description                 :"$UrlListDescription                    
-#                    $HostType = $($ComputingFw.IPHosts[$h].HostType)
-#                    $xmlContent += "<HostType>$HostType</HostType>"
-#                    write-host "Host Type                   :"$HostType
-#                    switch ($($HostType)) {
-#                        "IP" {
-#                            $xmlContent += "<IPAddress>$($ComputingFw.IPHosts[$h].IPAddress)</IPAddress>"
-#                        }
-#                        "IPRange" {
-#                            $xmlContent += "<StartIPAddress>$($ComputingFw.IPHosts[$h].startIPaddress)</StartIPAddress>"
-#                            $xmlContent += "<EndIPAddress>$($ComputingFw.IPHosts[$h].endIPaddress)</EndIPAddress>"
-#                        }
-#                        "IPList" {
-#                            $xmlContent += "<ListOfIPAddresses>$($ComputingFw.IPHosts[$h].ListOfIPAddresses)</ListOfIPAddresses>"
-#                        }
-#                        "Network" {
-#                            $xmlContent += "<IPAddress>$($ComputingFw.IPHosts[$h].IPAddress)</IPAddress>"
-#                            $xmlContent += "<Subnet>$($ComputingFw.IPHosts[$h].Subnet)</Subnet>"
-#                        }                                                                              
-#                        Default {
-#                            Write-Error -Message "Parse errror in Record Type"
-#                            exit 1
-#                        }
-#                    }
-#                    $xmlContent += "<HostGroupList>"                                       
-#                    [string]$xmlContentObjects = ""
-#                    $EntriesInListNumber = $($ComputingFw.IPHosts[$h].HostGroupList) | Measure-Object | Select-Object -ExpandProperty Count
-#                    for ($i = 0; $i -lt $EntriesInListNumber; $i++) {
-#                        $xmlContentObjects += "<HostGroup>$($ComputingFw.IPHosts[$h].HostGroupList[$($i)])</HostGroup>"
-#                    }
-#                    $xmlContent += $($xmlContentObjects)
-#                    $xmlContent += "</HostGroupList>"
-#                    write-host "Hosts Group List            :"$($xmlContentObjects)  
-#                    $xmlContent += "</IPHost>"
+                    $xmlFQDNContent = "<FQDNHost>"
+                    $UrlFqdnName = $($ComputingFw.FQDN[$fqdn].Name)
+                    $xmlFQDNContent += "<Name>$UrlFqdnName</Name>"
+#                    write-host "Firewall FQDN List          :"$UrlFqdnName
+                    $FqdnDescription = $($ComputingFw.FQDN[$fqdn].Description)
+                    $xmlFQDNContent += "<Description>$FqdnDescription</Description>"
+#                    write-host "Description                 :"$FqdnDescription                    
+                    $FqdnEntry = $($ComputingFw.FQDN[$fqdn].FQDN)
+                    $xmlFQDNContent += "<FQDN>$FqdnEntry</FQDN>"
+#                    write-host "Host Type                   :"$FqdnEntry
+                    $xmlFQDNContent += "<FQDNHostGroupList>"                                       
+                    [string]$xmlContentObjects = ""
+                    $EntriesInListNumber = $ComputingFw.FQDN[$fqdn].FQDNHostGroupList | Measure-Object | Select-Object -ExpandProperty Count
+#                    write-host "FQDN Group List number :"  $EntriesInListNumber
+                    for ($Group = 0; $Group -lt $EntriesInListNumber; $Group++) 
+                    {
+                        $xmlContentObjects += "<FQDNHostGroup>$($ComputingFw.FQDN[$fqdn].FQDNHostGroupList[$($Group)])</FQDNHostGroup>"
+                    }
+                    $xmlFQDNContent += $($xmlContentObjects)
+                    $xmlFQDNContent += "</FQDNHostGroupList>"
+#                    write-host "FQDN Group List            :"$($xmlContentObjects)  
+                    $xmlFQDNContent += "</FQDNHost>"
 #                    write-host ""
-#                    #            write-host "All Record ready to be used :"$xmlContent
-#                    $SearchLycos = ILookFor -ThatOne $ComputingFw.Firewall -IntoThat $SortedArrayFwList
-#                    #            $SearchLycos | Format-Table -Wrap
-#                    $local:FwAdminIpAddress = $SearchLycos.IPAddress
-#                    $local:FwAdminListeningPort = $SearchLycos.AccesPortNb
-#                    $local:EncryptedPassword = $SearchLycos.Password
-#                    $local:Password = ConvertTo-SecureString -String $EncryptedPassword
-#                    $local:Credentials = New-Object System.Management.Automation.PSCredential ($SearchLycos.LoginName, $local:Password)
-#                    $local:AccessTimeOut = $SearchLycos.TimeOut
-#                    $local:FuncURL = BuildURLFunction -FuncFwIP $local:FwAdminIpAddress -FuncFwPort $local:FwAdminListeningPort
-#                    $local:FormPayload = BuildURLPayload -PayloadFwLogin $($local:Credentials.UserName) -PayloadFwPwd $($local:Credentials.GetNetworkCredential().Password) -PayloadParameters $xmlContent -PayloadStrLength 8
-#                    $local:FullURI = $local:FuncURL + $local:FormPayload
-#                    try {
+#                    write-host "All Record ready to be used :"$xmlFQDNContent
+                    $SearchLycos = ILookFor -ThatOne $ComputingFw.Firewall -IntoThat $SortedArrayFwList
+#                    $SearchLycos | Format-Table -Wrap
+                    $local:FwAdminIpAddress = $SearchLycos.IPAddress
+                    $local:FwAdminListeningPort = $SearchLycos.AccesPortNb
+                    $local:EncryptedPassword = $SearchLycos.Password
+                    $local:Password = ConvertTo-SecureString -String $EncryptedPassword
+                    $local:Credentials = New-Object System.Management.Automation.PSCredential ($SearchLycos.LoginName, $local:Password)
+                    $local:AccessTimeOut = $SearchLycos.TimeOut
+                    $local:FuncURL = BuildURLFunction -FuncFwIP $local:FwAdminIpAddress -FuncFwPort $local:FwAdminListeningPort
+                    $local:FormPayload = BuildURLPayload -PayloadFwLogin $($local:Credentials.UserName) -PayloadFwPwd $($local:Credentials.GetNetworkCredential().Password) -PayloadParameters $xmlFQDNContent -PayloadStrLength 8
+                    $local:FullURI = $local:FuncURL + $local:FormPayload
+                    try 
+                        {
 #                        write-host "URL Passée :" $local:FullURI
 #                        write-host "-------------------------------------"  
-#                        $HttpResult = Invoke-RestMethod -Uri $FullURI -Method 'Post' -ContentType "application/xml" -SkipCertificateCheck -TimeoutSec $AccessTimeOut -StatusCodeVariable IPHostURLReply
+                        $HttpResult = Invoke-RestMethod -Uri $FullURI -Method 'Post' -ContentType "application/xml" -SkipCertificateCheck -TimeoutSec $AccessTimeOut -StatusCodeVariable IPHostURLReply
 #                        $HttpResult.OuterXml
-#                        $SelectedIPHostsTags = $HttpResult | Select-Xml -XPath "//Login | //IPHost"
-#                        write-host "Communication with IP :" $FwAdminIpAddress
-#                        write-host "Creation of IP Host   :" $UrlListName
-#                        write-host "Reply Status Code     :" $IPHostURLReply
-#                        $SelectedIPHostsTags | ForEach-Object { $_.Node.InnerText }
-#                        write-host "----------------------------------------------"                       
-#                    }
-#                    catch {
-#                        Write-host "Error calling URL"
-#                        Write-Host "Error : $($_.Exception.Message)"
-#                    }
-#                }            
-#            }                
+                        $SelectedIPHostsTags = $HttpResult | Select-Xml -XPath "//Login | //Status"
+                        write-host "Communication with IP :" $FwAdminIpAddress
+                        write-host "Creation of FQDN      :" $UrlFqdnName
+                        write-host "Reply Status Code     :" $IPHostURLReply
+                        $SelectedIPHostsTags | ForEach-Object { $_.Node.InnerText }
+                        write-host "----------------------------------------------"                       
+                       }
+                    catch {
+                        Write-host "Error calling URL"
+                        Write-Host "Error : $($_.Exception.Message)"
+                    }
+                }            
+            }                
         }
         catch {
             write-host ""
