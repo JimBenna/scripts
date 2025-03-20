@@ -35,6 +35,7 @@ Write-Output ""
 # ---- Functions ----
 function BuildURLFunction {
     param (
+        [string]$Command,
         [string]$FuncFwIP,
         [string]$FuncFwPort,
         [string]$FuncFwLogin,
@@ -42,7 +43,7 @@ function BuildURLFunction {
         [string]$FuncFwTimeOut
     )
     $FuncUrlLogin = "https://" + $FuncFwIP + ":" + $FuncFwPort + "/webconsole/APIController?reqxml=<Request><Login><Username>" + $FuncFwLogin + "</Username><Password>" + $FuncFwPwd + "</Password></Login><GET>"
-    $FuncUrlCommand = "<Services/>"
+    $FuncUrlCommand = $Command
     $FuncUrlEnding = "</GET></Request>"
     $FuncUrlContentType = @{}
     $FuncUrlContentType.Add("content-type", "application/xml")
@@ -75,23 +76,58 @@ function Split-StringAfterEqualSign {
         exit 4
     }
 }
-function TranformInterfacesXmlListToArray {
+function TransformPortsXmlListToArray 
+{
     param (
         [xml]$XmlDocument
     )
-    $XmlTag = $XmlDocument.SelectNodes("//Services")
-    $OutTagArray = @()
-    foreach ($Node in $XmlTag) {
-        $OutTag = $Node.OuterXml
-        $CleanedGroupList=
-        $OutTagArray += [pscustomobject]@{
-            Name              = $Node.Name
-            Description       = $Node.Description
-            Type              = $Node.Type
-            ServiceList = $Node.ServicesDetail.ServiceDetail
+    $XmlServiceTag = $XmlDocument.SelectNodes("//Services")
+    $OutServicesArray = @()
+    foreach ($Node in $XmlServiceTag) 
+    {
+        $OutServices = $Node.OuterXml
+#       write-host "Services List :"
+#       write-host $OutServices
+        $OutServicesArray += [pscustomobject]@{
+            Name                = $Node.Name
+            Description         = $Node.Description
+            Type                = $Node.Type
+            ServiceList         = $Node.ServiceList
+            SourcePort          = $Node.ServiceDetails.ServiceDetail.SourcePort
+            DestinationPort     = $Node.ServiceDetails.ServiceDetail.DestinationPort
+            Protocol            = $Node.ServiceDetails.ServiceDetail.Protocol
+            ProtocolName        = $Node.ServiceDetails.ServiceDetail.ProtocolName
+            ICMPType            = $Node.ServiceDetails.ServiceDetail.ICMPType
+            ICMPCode            = $Node.ServiceDetails.ServiceDetail.ICMPCode
+            ICMPv6Type          = $Node.ServiceDetails.ServiceDetail.ICMPv6Type
+            ICMPv6Code          = $Node.ServiceDetails.ServiceDetail.ICMPv6Code
+
         }
     }
-    return $OutTagArray
+    return $OutServicesArray
+}
+
+function TransformPortsGroupsXmlListToArray 
+{
+    param (
+        [xml]$XmlDocument
+    )
+    $XmlGroupsTag = $XmlDocument.SelectNodes("//ServiceGroup")
+    $OutGroupsArray = @()
+    foreach ($NodeGroup in $XmlGroupsTag) 
+    {
+
+ #       $OutServicesGroup = $NodeGroup.OuterXml
+ #       write-host "Groups of Services List :"        
+ #       write-host $OutServicesGroup
+        $OutGroupsArray += [pscustomobject]@{
+            Name                = $NodeGroup.Name
+            Description         = $NodeGroup.Description
+            ServiceList         = $NodeGroup.ServiceList.Innertext
+            Services            = $NodeGroup.ServiceList.Service
+        }
+    }
+    return $OutGroupsArray
 }
 # ---- Main program ----
 # Checks if firewalls list can exists and can be read
@@ -150,6 +186,7 @@ try {
                 $ImportJsonFile = Get-content -Path $InputFile | ConvertFrom-Json
                 $Counter = 0
                 $MainTable = [System.Collections.ArrayList]::new()
+                $MainGroupsTable = [System.Collections.ArrayList]::new()
                 foreach ($Item in $ImportJsonFile) {
                     try {
 #                        Write-Host "---------------------------------------------------------"
@@ -165,22 +202,45 @@ try {
 #                        Write-Host "Credentials Login Password : $($Credentials.GetNetworkCredential().Password)"
                         $AccessTimeOut = $Item.TimeOut
 #                        Write-Host "Access TimeOut             :"$AccessTimeOut
-                        $FuncURL = BuildURLFunction -FuncFwIP $FwAdminIpAddress -FuncFwPort $FwAdminListeningPort -FuncFwLogin $($Credentials.UserName) -FuncFwPwd $($Credentials.GetNetworkCredential().Password)
-                        Write-Host $FuncURL
                         try {
+                            $ServiceCommand="<Services/>"
+                            $FuncURL = BuildURLFunction -Command $ServiceCommand -FuncFwIP $FwAdminIpAddress -FuncFwPort $FwAdminListeningPort -FuncFwLogin $($Credentials.UserName) -FuncFwPwd $($Credentials.GetNetworkCredential().Password)
+                            Write-Host $FuncURL
                             $HttpResult = (Invoke-RestMethod -Uri $FuncURL -Method Post -ContentType "application/xml" -SkipCertificateCheck -TimeoutSec $AccessTimeOut)
-                            $EntriesListArray = TranformInterfacesXmlListToArray -XmlDocument $HttpResult
-                            $Firewalls_Object = [PSCustomObject]@{
+#                            write-host $HttpResult.OuterXml
+                            $ServiceListArray = TransformPortsXmlListToArray -XmlDocument $HttpResult
+                            $Services_Objects = [PSCustomObject]@{
                                 Firewall        = $Item.IPAddress
-                                Service         = $EntriesListArray
+                                Service         = $ServiceListArray
                             }
-                            #                        $Firewalls_Object
-                            $MainTable.add($Firewalls_Object) | Out-Null
-                        }
-                        catch {
+                        write-host $Service_Objects
+                            $MainTable.add($Services_Objects) | Out-Null
+                            }
+                        catch 
+                            {
                             Write-host "Error calling URL"
                             Write-Host "Error : $($_.Exception.Message)"
-                        }
+                            }
+                        try 
+                            {
+                            $GroupsCommand="<ServiceGroup/>"
+                            $FuncURL = BuildURLFunction -Command $GroupsCommand -FuncFwIP $FwAdminIpAddress -FuncFwPort $FwAdminListeningPort -FuncFwLogin $($Credentials.UserName) -FuncFwPwd $($Credentials.GetNetworkCredential().Password)
+                            Write-Host $FuncURL
+                            $HttpGroupsResult = (Invoke-RestMethod -Uri $FuncURL -Method Post -ContentType "application/xml" -SkipCertificateCheck -TimeoutSec $AccessTimeOut)
+                            $GroupsListArray = TransformPortsGroupsXmlListToArray -XmlDocument $HttpGroupsResult
+                            $Groups_Objects = [PSCustomObject]@{
+                                Firewall        = $Item.IPAddress
+                                Groups          = $GroupsListArray
+                            }
+#                        $Service_Objects
+                            $MainGroupsTable.add($Groups_Objects) | Out-Null
+                            }
+                        catch 
+                            {
+                            Write-host "Error calling URL"
+                            Write-Host "Error : $($_.Exception.Message)"
+                            }
+    
                     }
                     catch {
                         Write-Host "Error encountered while parsing "$InputFile
@@ -214,8 +274,9 @@ catch {
 
 #End of loops
 $MainTable | Format-Table -Wrap
-$Table_In_JSON = $MainTable | Sort-Object -Property IPAddress | ConvertTo-Json -Depth 5
+$MainGroupsTable | Format-Table -Wrap
+$MainTable_In_JSON = $MainTable | Sort-Object -Property IPAddress | ConvertTo-Json -Depth 5
+$MainGroupsTable_In_JSON = $MainGroupsTable | Sort-Object -Property IPAddress | ConvertTo-Json -Depth 3
 #$Table_In_JSON
-$Table_In_JSON | Out-File -FilePath $OutputFile utf8
-
-
+$MainTable_In_JSON | Out-File -FilePath $OutputFile utf8
+$MainGroupsTable_In_JSON | Out-File -FilePath /home/user/Ports_Groups.json utf8
