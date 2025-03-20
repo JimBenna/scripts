@@ -123,10 +123,10 @@ function TransformPortsGroupsXmlListToArray
         $OutGroupsArray += [pscustomobject]@{
             Name                = $NodeGroup.Name
             Description         = $NodeGroup.Description
-            ServiceList         = $NodeGroup.ServiceList.Innertext
-            Services            = $NodeGroup.ServiceList.Service
+            ServiceList         = $NodeGroup.ServiceList.InnerText.trim() -split '\s+'
         }
     }
+  
     return $OutGroupsArray
 }
 # ---- Main program ----
@@ -188,7 +188,8 @@ try {
                 $MainTable = [System.Collections.ArrayList]::new()
                 $MainGroupsTable = [System.Collections.ArrayList]::new()
                 foreach ($Item in $ImportJsonFile) {
-                    try {
+                    try 
+                    {
 #                        Write-Host "---------------------------------------------------------"
 #                        Write-Host "Iteration Number           :"$Counter
                         $FwAdminIpAddress = $Item.IPAddress
@@ -202,10 +203,11 @@ try {
 #                        Write-Host "Credentials Login Password : $($Credentials.GetNetworkCredential().Password)"
                         $AccessTimeOut = $Item.TimeOut
 #                        Write-Host "Access TimeOut             :"$AccessTimeOut
-                        try {
+                        try 
+                            {
                             $ServiceCommand="<Services/>"
                             $FuncURL = BuildURLFunction -Command $ServiceCommand -FuncFwIP $FwAdminIpAddress -FuncFwPort $FwAdminListeningPort -FuncFwLogin $($Credentials.UserName) -FuncFwPwd $($Credentials.GetNetworkCredential().Password)
-                            Write-Host $FuncURL
+#                            Write-Host $FuncURL
                             $HttpResult = (Invoke-RestMethod -Uri $FuncURL -Method Post -ContentType "application/xml" -SkipCertificateCheck -TimeoutSec $AccessTimeOut)
 #                            write-host $HttpResult.OuterXml
                             $ServiceListArray = TransformPortsXmlListToArray -XmlDocument $HttpResult
@@ -213,7 +215,6 @@ try {
                                 Firewall        = $Item.IPAddress
                                 Service         = $ServiceListArray
                             }
-                        write-host $Service_Objects
                             $MainTable.add($Services_Objects) | Out-Null
                             }
                         catch 
@@ -225,7 +226,7 @@ try {
                             {
                             $GroupsCommand="<ServiceGroup/>"
                             $FuncURL = BuildURLFunction -Command $GroupsCommand -FuncFwIP $FwAdminIpAddress -FuncFwPort $FwAdminListeningPort -FuncFwLogin $($Credentials.UserName) -FuncFwPwd $($Credentials.GetNetworkCredential().Password)
-                            Write-Host $FuncURL
+#                            Write-Host $FuncURL
                             $HttpGroupsResult = (Invoke-RestMethod -Uri $FuncURL -Method Post -ContentType "application/xml" -SkipCertificateCheck -TimeoutSec $AccessTimeOut)
                             $GroupsListArray = TransformPortsGroupsXmlListToArray -XmlDocument $HttpGroupsResult
                             $Groups_Objects = [PSCustomObject]@{
@@ -240,15 +241,22 @@ try {
                             Write-host "Error calling URL"
                             Write-Host "Error : $($_.Exception.Message)"
                             }
-    
+
                     }
-                    catch {
+                    catch 
+                    {
                         Write-Host "Error encountered while parsing "$InputFile
                         Write-Host "Error $($_.Exception.Message)"
                         exit 1
                     }
                 }            
-                #            Write-Host ""
+# Maintenant qu'on a les 2 tables on les trie par ordre alphabétique sur le nom.
+$SortedMainTable    = $MainTable | Sort-Object -Property Firewall,Service.Name
+write-host "Maintable Triée"
+$SortedMainTable | Format-Table -Wrap
+$SortedGroupsTable  = $MainGroupsTable | Sort-Object -Property Firewall.Groups.Name
+write-host "Groupstable Triée"
+$SortedGroupsTable | Format-Table -Wrap
                 $Counter++
 #                Write-Host "Compteur :" $Counter
             }
@@ -273,10 +281,10 @@ catch {
 }
 
 #End of loops
-$MainTable | Format-Table -Wrap
-$MainGroupsTable | Format-Table -Wrap
+#$MainTable | Format-Table -Wrap
+#$MainGroupsTable | Format-Table -Wrap
 $MainTable_In_JSON = $MainTable | Sort-Object -Property IPAddress | ConvertTo-Json -Depth 5
-$MainGroupsTable_In_JSON = $MainGroupsTable | Sort-Object -Property IPAddress | ConvertTo-Json -Depth 3
+$MainGroupsTable_In_JSON = $MainGroupsTable | Sort-Object -Property IPAddress | ConvertTo-Json -Depth 6
 #$Table_In_JSON
 $MainTable_In_JSON | Out-File -FilePath $OutputFile utf8
 $MainGroupsTable_In_JSON | Out-File -FilePath /home/user/Ports_Groups.json utf8
