@@ -89,18 +89,19 @@ function TransformPortsXmlListToArray
 #       write-host "Services List :"
 #       write-host $OutServices
         $OutServicesArray += [pscustomobject]@{
-            Name                = $Node.Name
-            Description         = $Node.Description
-            Type                = $Node.Type
-            ServiceList         = $Node.ServiceList
-            SourcePort          = $Node.ServiceDetails.ServiceDetail.SourcePort
-            DestinationPort     = $Node.ServiceDetails.ServiceDetail.DestinationPort
-            Protocol            = $Node.ServiceDetails.ServiceDetail.Protocol
-            ProtocolName        = $Node.ServiceDetails.ServiceDetail.ProtocolName
-            ICMPType            = $Node.ServiceDetails.ServiceDetail.ICMPType
-            ICMPCode            = $Node.ServiceDetails.ServiceDetail.ICMPCode
-            ICMPv6Type          = $Node.ServiceDetails.ServiceDetail.ICMPv6Type
-            ICMPv6Code          = $Node.ServiceDetails.ServiceDetail.ICMPv6Code
+            Name                    = $Node.Name
+            Description             = $Node.Description
+            Type                    = $Node.Type
+            ServiceList             = $Node.ServiceList
+            ServiceListDescription  = $null
+            SourcePort              = $Node.ServiceDetails.ServiceDetail.SourcePort
+            DestinationPort         = $Node.ServiceDetails.ServiceDetail.DestinationPort
+            Protocol                = $Node.ServiceDetails.ServiceDetail.Protocol
+            ProtocolName            = $Node.ServiceDetails.ServiceDetail.ProtocolName
+            ICMPType                = $Node.ServiceDetails.ServiceDetail.ICMPType
+            ICMPCode                = $Node.ServiceDetails.ServiceDetail.ICMPCode
+            ICMPv6Type              = $Node.ServiceDetails.ServiceDetail.ICMPv6Type
+            ICMPv6Code              = $Node.ServiceDetails.ServiceDetail.ICMPv6Code
 
         }
     }
@@ -250,13 +251,50 @@ try {
                         exit 1
                     }
                 }            
-# Maintenant qu'on a les 2 tables on les trie par ordre alphabétique sur le nom.
-$SortedMainTable    = $MainTable | Sort-Object -Property Firewall,Service.Name
-write-host "Maintable Triée"
-$SortedMainTable | Format-Table -Wrap
-$SortedGroupsTable  = $MainGroupsTable | Sort-Object -Property Firewall.Groups.Name
-write-host "Groupstable Triée"
-$SortedGroupsTable | Format-Table -Wrap
+#write-host "Maintable"
+#$MainTable | Format-Table -Wrap
+#write-host "Groupstable"
+#$MainGroupsTable | Format-Table -Wrap
+
+foreach ($ItemInGroup in $MainGroupsTable) 
+{
+    $ip2 = $ItemInGroup.Firewall
+    $serviceListGroup = $ItemInGroup.Groups.ServiceList
+    $NameOfGroups = $ItemInGroup.Groups.Name
+    $MatchingEntry = $MainTable | Where-Object { $_.Firewall -eq $ip2 }
+    if ($MatchingEntry) 
+    {
+#        write-host ""
+#        write-host "On a trouvé : "$MatchingEntry
+#        write-host ""        
+        $TotalNumberOfServicesGroups = $NameOfGroups | Measure-Object | Select-Object -ExpandProperty Count
+        $NumberofEntries=0
+        foreach ($ServiceEntry in $NameOfGroups) 
+        {
+            $ConcernedServicesList = $MainGroupsTable.Groups[$NumberofEntries].ServiceList
+            $TotalNumbersOfServicesinGroup = $ConcernedServicesList| Measure-Object | Select-Object -ExpandProperty Count
+#            write-host "There is "$TotalNumbersOfServicesinGroup "services in" $MainGroupsTable.Groups[$($NumberofEntries)].Name ":" $ConcernedServicesList            
+#            write-host ""
+            foreach ($ServiceToUpdate in $ConcernedServicesList) 
+            {
+#                write-host "I have to update "$ServiceToUpdate" with "$ServiceEntry
+#                write-host "Description must also be updated :"$MainGroupsTable.Groups[$($NumberofEntries)].Description
+                $index = [array]::IndexOf($MainTable.Service.Name, $ServiceToUpdate)
+                if ($index -ne -1) {
+#                    Write-Output "Index of "$ServiceToUpdate" is at Index "$index"
+                    $MainTable.Service[$($index)].ServiceList              += $ServiceEntry+","
+                    $MainTable.Service[$($index)].ServiceListDescription   += $MainGroupsTable.Groups[$($NumberofEntries)].Description+","
+                } else {
+                    Write-Output $ServiceToUpdate" has not been found"
+                }
+            }
+            $NumberofEntries++
+        }
+    }
+}
+
+# Afficher le tableau 1 mis à jour
+# $tableau1
                 $Counter++
 #                Write-Host "Compteur :" $Counter
             }
@@ -287,4 +325,4 @@ $MainTable_In_JSON = $MainTable | Sort-Object -Property IPAddress | ConvertTo-Js
 $MainGroupsTable_In_JSON = $MainGroupsTable | Sort-Object -Property IPAddress | ConvertTo-Json -Depth 6
 #$Table_In_JSON
 $MainTable_In_JSON | Out-File -FilePath $OutputFile utf8
-$MainGroupsTable_In_JSON | Out-File -FilePath /home/user/Ports_Groups.json utf8
+
