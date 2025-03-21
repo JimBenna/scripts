@@ -282,8 +282,8 @@ foreach ($ItemInGroup in $MainGroupsTable)
                 $index = [array]::IndexOf($MainTable.Service.Name, $ServiceToUpdate)
                 if ($index -ne -1) {
 #                    Write-Output "Index of "$ServiceToUpdate" is at Index "$index"
-                    $MainTable.Service[$($index)].ServiceList              += $ServiceEntry+","
-                    $MainTable.Service[$($index)].ServiceListDescription   += $MainGroupsTable.Groups[$($NumberofEntries)].Description+","
+                    $MainTable.Service[$($index)].ServiceList             += $ServiceEntry+","
+                    $MainTable.Service[$($index)].ServiceListDescription   += ,$MainGroupsTable.Groups[$($NumberofEntries)].Description+"</GroupListDesc>"
                 } else {
                     Write-Output $ServiceToUpdate" has not been found"
                 }
@@ -293,8 +293,7 @@ foreach ($ItemInGroup in $MainGroupsTable)
     }
 }
 
-# Afficher le tableau 1 mis à jour
-# $tableau1
+
                 $Counter++
 #                Write-Host "Compteur :" $Counter
             }
@@ -319,6 +318,7 @@ catch {
 }
 
 #End of loops
+# Still need to cleanup some entries in GroupList and GroupList description
 #$MainTable | Format-Table -Wrap
 #$MainGroupsTable | Format-Table -Wrap
 $MainTable_In_JSON = $MainTable | Sort-Object -Property IPAddress | ConvertTo-Json -Depth 5
