@@ -1,0 +1,166 @@
+// This templates shows how to define ports.
+// Here is a typical service and services group configuration.
+//
+//      {
+//        "Name": "BGP",
+//        "Description": "",
+//        "Type": "TCPorUDP",
+//        "ServiceList": null,
+//        "ServiceListDescription": null,
+//        "SourcePort": "1:65535",
+//        "DestinationPort": "179",
+//        "Protocol": "TCP",
+//        "ProtocolName": null,
+//        "ICMPType": null,
+//        "ICMPCode": null,
+//        "ICMPv6Type": null,
+//        "ICMPv6Code": null
+//      },
+//
+//
+// We used cisco webex application as an example.
+// And we push this Application requirements on 2 firewalls with IP Addresses 192.168.202.1 and 192.168.201.1
+[
+  {
+    "Firewall": "192.168.202.1",
+    "Service": [
+     {
+        "Name": "HTTP",
+        "Description": "HyperText Transfer Protocol on port 80",
+        "Type": "TCPorUDP",
+        "ServiceList": ["Web","Cisco WEBEX App"],
+        "ServiceListDescription": ["Usual Www protocol","Cisco WEBEX App ports requirements"],
+        "SourcePort": "1:65535",
+        "DestinationPort": "80",
+        "Protocol": "TCP"
+      },
+      {
+        "Name": "HTTPS",
+        "Description": "Usual SSL encrypted channel",
+        "Type": "TCPorUDP",
+        "ServiceList": ["Web","Cisco WEBEX App"],
+        "ServiceListDescription": ["Usual Www protocol","Cisco WEBEX App ports requirements"],
+        "SourcePort": "1:65535",
+        "DestinationPort": "443",
+        "Protocol": "TCP"
+      },
+      {
+        "Name": "NTP",
+        "Description": "NTP Protocol",
+        "Type": "TCPorUDP",
+        "ServiceList": ["NTP","Cisco WEBEX App"],
+        "ServiceListDescription": ["Network time protocol","Cisco WEBEX App ports requirements"],
+        "SourcePort": [
+          "1:65535",
+          "1:65535"
+        ],
+        "DestinationPort": [
+          "123",
+          "123"
+        ],
+        "Protocol": [
+          "TCP",
+          "UDP"
+        ]
+      },
+      {
+        "Name": "DNS",
+        "Description": "Domain Name Service",
+        "Type": "TCPorUDP",
+        "ServiceList": ["DNS","Cisco WEBEX App"],
+        "ServiceListDescription": ["DNS protocol","Cisco WEBEX App ports requirements"],
+        "SourcePort": [
+          "1:65535",
+          "1:65535"
+        ],
+        "DestinationPort": [
+          "53",
+          "53"
+        ],
+        "Protocol": [
+          "TCP",
+          "UDP"
+        ],
+      },
+      {
+        "Name": "SRTP over UDP",
+        "Description": "SRTP over UDP Protocol. Encrypted audio, video and content sharing on the Webex App and Cisco Video Devices",
+        "Type": "TCPorUDP",
+        "ServiceList": ["Cisco WEBEX App"],
+        "ServiceListDescription": ["SRTP protocol","Cisco WEBEX App ports requirements"],
+        "SourcePort": [
+          "1:65535",
+          "1:65535",
+          "1:65535"
+        ],
+        "DestinationPort": [
+          "5004",
+          "9000",
+          "50000:53000",
+        ],
+        "Protocol": [
+          "UDP",
+          "UDP",          
+          "UDP"
+        ]
+      },
+      {
+        "Name": "SRTP over TCP",
+        "Description": "SRTP over TCP Protocol. Encrypted audio, video and content sharing on the Webex App and Cisco Video Devices",
+        "Type": "TCPorUDP",
+        "ServiceList": ["Cisco WEBEX App"],
+        "ServiceListDescription": ["SRTP protocol","Cisco WEBEX App ports requirements"],
+        "SourcePort": [
+          "1:65535"
+        ],
+        "DestinationPort": [
+          "5004"
+        ],
+        "Protocol": [
+          "TCP"
+        ]
+      }
+    ]
+  },
+  {
+    "Firewall": "192.168.201.1",
+    "Service": [
+      {
+        "Name": "NTP",
+        "Description": "NTP Protocol",
+        "Type": "TCPorUDP",
+        "ServiceList": ["NTP","Cisco WEBEX App"],
+        "ServiceListDescription": ["Network time protocol","Cisco WEBEX App ports requirements"],
+        "SourcePort": [
+          "1:65535",
+          "1:65535"
+        ],
+        "DestinationPort": [
+          "123",
+          "123"
+        ],
+        "Protocol": [
+          "TCP",
+          "UDP"
+        ]
+      },
+      {
+        "Name": "DNS",
+        "Description": "Domain Name Service",
+        "Type": "TCPorUDP",
+        "ServiceList": ["DNS","Cisco WEBEX App"],
+        "ServiceListDescription": ["DNS protocol","Cisco WEBEX App ports requirements"],
+        "SourcePort": [
+          "1:65535",
+          "1:65535"
+        ],
+        "DestinationPort": [
+          "53",
+          "53"
+        ],
+        "Protocol": [
+          "TCP",
+          "UDP"
+        ],
+      },
+]
