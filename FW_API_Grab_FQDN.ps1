@@ -3,7 +3,7 @@
 #This script reads a CSV file that contains firewalls list
 .DESCRIPTION
 It reads the following columns : IP ADDRESS, LOGIN NAME, PASSWORD, Access TimeOut in seconds
-It outputs the IPHosts of each firewalls mentioned in the list
+It outputs the FQDN list of each firewalls mentioned in the list used in file input
 It must be used as follows
 .PARAMETER Param01
 Description Input file that lists all details about firewalls that have to be requested. Please provide filename with fullpath access
@@ -24,7 +24,7 @@ param (
 )
 Clear-Host
 Write-Output "==============================================================================="
-Write-Output "Sophos Firewall API - Retrieve IP Hosts lists"
+Write-Output "Sophos Firewall API - Retrieve FQDN Hosts lists"
 Write-Output "==============================================================================="
 Write-Output ""
 Write-Output "It requires 2 parameters : "
