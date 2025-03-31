@@ -216,9 +216,8 @@ $FilterData=@()
 #$FilterData=$FirewallTable
 foreach ($row in $FirewallTable) {
     # Check if cell number 06 in the row is not empty
-     if ($row[7
-     
-     ] -ne "") {
+     if ($row[7] -ne "") 
+    {
          $FilterData += ,$row
     }
 }
