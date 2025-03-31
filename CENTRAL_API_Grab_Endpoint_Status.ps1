@@ -92,7 +92,7 @@ try {
     Write-Output "Please verify the credentials used!" 
     Write-Output "" 
     Read-Host -Prompt "Press ENTER to continue..."
-    Break
+    exit 2
 }
 
 # Set the Token for use later on:

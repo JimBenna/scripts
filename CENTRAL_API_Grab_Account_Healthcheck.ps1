@@ -59,11 +59,8 @@ try {
 	Write-Output "AUTHENTICATION FAILED - Unable to retreive SOPHOS API Authentication Token"
     Write-Output "Please verify the credentials used!" 
     Write-Output "" 
-    Write-Output "If you are working with saved credentials then you can reset them by calling"
-    Write-Output "this script with the -SaveCredentials parameter"
-    Write-Output "" 
     Read-Host -Prompt "Press ENTER to continue..."
-    Break
+    exit 1
 }
 
 # Set the Token for use later on:
