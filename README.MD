@@ -1,5 +1,7 @@
 # Scripts Repository
 
+[![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
+
 
 Those scripts are examples they may not be always accurate. Feel free to modify, correct them.
 
