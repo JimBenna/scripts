@@ -1,5 +1,8 @@
 # Scripts Repository
 
+
+Those scripts are examples they may not be always accurate. Feel free to modify, correct them.
+
 ## Those scripts written in PowerShell are intended to work with API
 
 The scripts are splitted in several natures.

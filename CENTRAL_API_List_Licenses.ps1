@@ -57,7 +57,7 @@ try {
 
 #Clear-Host
 Write-Output "==============================================================================="
-Write-Output "Sophos API - List all Licenses Details"
+Write-Output "Sophos Central API - List all Licenses Details"
 Write-Output "==============================================================================="
 
 
