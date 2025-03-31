@@ -7,7 +7,7 @@ param ([switch] $SaveCredentials)
 
 Clear-Host
 Write-Output "==============================================================================="
-Write-Output "Sophos API - Admin Authentication Example"
+Write-Output "Sophos CENTRAL API - Account HealtCheck"
 Write-Output "==============================================================================="
 
 # Define the filename and path for the credential file
