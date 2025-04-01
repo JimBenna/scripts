@@ -3,7 +3,10 @@ param (
     [string]$ParamClientId = "",
 
     [Parameter(Mandatory=$true)]
-    [string]$ParamClientSecret = ""
+    [string]$ParamClientSecret = "",
+
+    [Parameter(Mandatory=$true)]
+    [string]$JsonInputFile = ""
 )
 
 function Split-StringAfterEqualSign {
@@ -36,7 +39,12 @@ try {
         Write-Output "No Client Secret provided"
         {break}
     }
-    else {
+    if (($null -eq $JsonInputFile) -or ($JsonInputFile -eq "")){
+        Write-Output "No JSON input file provided"
+        {break}
+    }
+    else 
+    {
         $resultClient = Split-StringAfterEqualSign -inputString $ParamClientId
         #Write-Host "Id Client     : "$resultClient.Key
         #Write-Host "Client ID     : "$resultClient.Value
@@ -45,6 +53,25 @@ try {
         #Write-Host "Id Secret     : "$resultSecret.Key
         #Write-Host "Client Secret : "$resultSecret.Value
         $ClientSecret=$resultSecret.Value
+        $JsonFileVariable = Split-StringAfterEqualSign -inputString $JsonInputFile
+        $JsonFile = $JsonFileVariable.Value
+        if (-Not (Test-Path -Path $JsonFile)) 
+        {
+            # Input file does not exist, we should stop
+            Write-Host "File "$JsonFile" does not exist"
+            exit 11
+        }
+        else 
+        {
+            try {
+                $file01 = Get-Item $JsonFile
+                $file01.OpenRead().Close()    
+            }
+            catch {
+                Write-Host "File "$JsonFile" exists but can not be accessed in Read mode"
+                exit 12    
+            }
+        }
     }
 } catch {
     Write-Error "A basic error occurred: $_"
@@ -53,9 +80,6 @@ try {
 Write-Output "==============================================================================="
 Write-Output "Sophos CENTRAL API - Setup Websites and category"
 Write-Output "==============================================================================="
-#CSV filename and full directory
-$ScriptLaunchDate= Get-Date -Format "yyyyMMddHHmmssfff"
-$CSV_Endpoints_list = "Websites_list_$ScriptLaunchDate.csv"
 # SOPHOS OAuth URL
 $AuthURI = "https://id.sophos.com/api/v2/oauth2/token"
 
