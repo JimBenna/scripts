@@ -51,11 +51,11 @@ try {
     exit 1
 }
 Write-Output "==============================================================================="
-Write-Output "Sophos CENTRAL API - Setup Websites and category"
+Write-Output "Sophos CENTRAL API - Retrieve Websites and category"
 Write-Output "==============================================================================="
 #CSV filename and full directory
 $ScriptLaunchDate= Get-Date -Format "yyyyMMddHHmmssfff"
-$CSV_Endpoints_list = "Websites_list_$ScriptLaunchDate.csv"
+$OutputFile = "Websites_list_$ScriptLaunchDate.json"
 # SOPHOS OAuth URL
 $AuthURI = "https://id.sophos.com/api/v2/oauth2/token"
 
@@ -120,31 +120,23 @@ $TenantHead.Add("Content-Type", "application/json")
 $Uri = $DataRegion+"/endpoint/v1/settings/web-control/local-sites"
 
 
-# Import data from CSV
-Write-Output "Importing sites from CSV..."
-Write-Output ""
-$importFile = Import-Csv $PSScriptRoot\websites.csv
-
-# Iterate through all sites from CSV
-Write-Output "Creating local sites in Sophos Central..."
-Write-Output ""
-
-foreach ($Item in $ImportFile){
-
-    # Split string in case of multiple tags
-    $Tags = @($Item.tags.split("{;}"))
-
-    # Change tags into an array
-    $Item.PSobject.Properties.Remove('tags')
-	$Item | Add-Member -NotePropertyName tags -NotePropertyValue $Tags
-    
-    # Create request body by converting to JSON
-    $Body = $Item | ConvertTo-Json
 
     # Invoke Request
-    $Result = (Invoke-RestMethod -Uri $Uri -Method Post -ContentType "application/json" -Headers $TenantHead -Body $Body -ErrorAction SilentlyContinue -ErrorVariable ScriptError)
-    Write-Output "Created Site: $($Result.url) with ID $($Result.id)"
-    
-}
+    $Result = (Invoke-RestMethod -Uri $Uri -Method Get -ContentType "application/json" -Headers $TenantHead -ErrorAction SilentlyContinue -ErrorVariable ScriptError)
+    Write-Output "Result :" $Result
+    $LocalWebsitesArray = @()
+    foreach ($Node in $Result.items) {
+        $LocalWebsitesArray += [pscustomobject]@{
+            Id              = $Node.id
+            CategoryId      = $Node.categoryId
+            Tags            = $Node.tags
+            Url             = $Node.url
+            Comment         = $Node.coment
+        }
+    }
+#$LocalWebsitesArray | Format-Table -AutoSize
+$Table_In_JSON = $LocalWebsitesArray | Sort-Object -Property CategoryId | ConvertTo-Json -Depth 5
+#l$Table_In_JSON
+$Table_In_JSON | Out-File -FilePath $OutputFile utf8    
 Write-Output ""
-Write-Output "Successfully created websites and category in Sophos Central..."
+Write-Output "..."

@@ -51,11 +51,11 @@ try {
     exit 1
 }
 Write-Output "==============================================================================="
-Write-Output "Sophos CENTRAL API - Setup Websites and category"
+Write-Output "Sophos CENTRAL API - Retrieve Websites Categories List"
 Write-Output "==============================================================================="
 #CSV filename and full directory
 $ScriptLaunchDate= Get-Date -Format "yyyyMMddHHmmssfff"
-$CSV_Endpoints_list = "Websites_list_$ScriptLaunchDate.csv"
+$OutputFile = "WebCategories_list_$ScriptLaunchDate.json"
 # SOPHOS OAuth URL
 $AuthURI = "https://id.sophos.com/api/v2/oauth2/token"
 
@@ -117,34 +117,22 @@ $TenantHead.Add("X-Tenant-ID" ,"$TenantID")
 $TenantHead.Add("Content-Type", "application/json")
 
 # Define URI for updating the local site list
-$Uri = $DataRegion+"/endpoint/v1/settings/web-control/local-sites"
+$Uri = $DataRegion+"/endpoint/v1/settings/web-control/categories"
 
 
-# Import data from CSV
-Write-Output "Importing sites from CSV..."
-Write-Output ""
-$importFile = Import-Csv $PSScriptRoot\websites.csv
-
-# Iterate through all sites from CSV
-Write-Output "Creating local sites in Sophos Central..."
-Write-Output ""
-
-foreach ($Item in $ImportFile){
-
-    # Split string in case of multiple tags
-    $Tags = @($Item.tags.split("{;}"))
-
-    # Change tags into an array
-    $Item.PSobject.Properties.Remove('tags')
-	$Item | Add-Member -NotePropertyName tags -NotePropertyValue $Tags
-    
-    # Create request body by converting to JSON
-    $Body = $Item | ConvertTo-Json
 
     # Invoke Request
-    $Result = (Invoke-RestMethod -Uri $Uri -Method Post -ContentType "application/json" -Headers $TenantHead -Body $Body -ErrorAction SilentlyContinue -ErrorVariable ScriptError)
-    Write-Output "Created Site: $($Result.url) with ID $($Result.id)"
-    
-}
-Write-Output ""
-Write-Output "Successfully created websites and category in Sophos Central..."
+    $Result = (Invoke-RestMethod -Uri $Uri -Method Get -ContentType "application/json" -Headers $TenantHead -ErrorAction SilentlyContinue -ErrorVariable ScriptError)
+    Write-Output "Result :" $Result
+    $WebCategoriesArray = @()
+    foreach ($Node in $Result) {
+        $WebCategoriesArray += [pscustomobject]@{
+            Id              = $Node.id
+            Name            = $Node.name
+            Label           = $Node.label
+        }
+    }
+#$WebCategoriesArray | Format-Table -AutoSize
+$Table_In_JSON = $WebCategoriesArray | Sort-Object -Property id | ConvertTo-Json
+#$Table_In_JSON
+$Table_In_JSON | Out-File -FilePath $OutputFile utf8    
