@@ -55,7 +55,7 @@ Write-Output "Sophos CENTRAL API - Display Detections list"
 Write-Output "==============================================================================="
 #CSV filename and full directory
 $ScriptLaunchDate= Get-Date -Format "yyyyMMddHHmmssfff"
-$CSV_Endpoints_list = "Cases_list_$ScriptLaunchDate.csv"
+$CSV_Endpoints_list = "Detections_list_$ScriptLaunchDate.csv"
 
 # SOPHOS OAuth URL
 $AuthURI = "https://id.sophos.com/api/v2/oauth2/token"
