@@ -1,0 +1,67 @@
+[
+  {
+    "categoryId": 30,
+    "tags": [
+      "Allow"
+    ],
+    "url": "www.a-website-to-allow.com",
+    "comment": "This example fake website categorized as NEWS",
+  },
+  {
+    "categoryId": 5,
+    "tags": [
+      "Block"
+    ],
+    "url": "www.block-this-websinte.net",
+    "comment": "This example fake website categorized as Blog and Forums",
+  },
+  {
+    "categoryId": 10,
+    "tags": [
+      "Warn"
+    ],
+    "url": "www.warn-users-that-access-to-that.org",
+    "comment": "This example fake website categorized as DOWNLOADS"
+  },
+ {
+   "categoryId": 5,
+    "tags": [
+      "Block",
+      "warn"
+    ],
+    "url": "www.abcd.fr",
+    "comment": "Categorized as Gambling"
+  },
+  {
+    "categoryId": 8,
+    "tags": [
+      "Allow"
+    ],
+    "url": "212.132.0.0/19",
+    "comment": "One of microsoft Public IPv4 subnet"
+  },
+  {
+    "categoryId": 8,
+    "tags": [
+      "Allow"
+    ],
+    "url": "[2a01:4180::]/32",
+    "comment": "One of microsoft IPv6 subnet"
+  },
+  {
+    "categoryId": 8,
+    "tags": [
+      "Allow"
+    ],
+    "url": "microsoft.com",
+    "comment": "Microsoft Domain to allow"
+  },
+  {
+    "categoryId": 37,
+    "tags": [
+      "Allow"
+    ],
+    "url": "translate.google.com",
+    "comment": "This website is categorized as Proxies & Translators"
+  }
+]

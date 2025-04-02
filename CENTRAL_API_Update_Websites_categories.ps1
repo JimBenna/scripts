@@ -147,7 +147,7 @@ $Uri = $DataRegion+"/endpoint/v1/settings/web-control/local-sites"
 # Import data from CSV
 Write-Output "Importing sites from json input file..."
 Write-Output ""
-$local:importFile = Get-content -Path $Input01Value -Raw | ConvertFrom-Json
+$local:importFile = Get-content -Path $JsonFile -Raw | ConvertFrom-Json
 $local:ArrayWebList = @($local:importFile)
 
 $local:ArrayWebList | Format-Table -AutoSize
@@ -159,14 +159,15 @@ Write-Output ""
 foreach ($Item in $local:ArrayWebList){
 
     # Split string in case of multiple tags
-    $Tags = @($Item.tags.split("{;}"))
+ #   $Tags = @($Item.tags.split("{;}"))
 
     # Change tags into an array
-    $Item.PSobject.Properties.Remove('tags')
-	$Item | Add-Member -NotePropertyName tags -NotePropertyValue $Tags
+#    $Item.PSobject.Properties.Remove('tags')
+#	$Item | Add-Member -NotePropertyName tags -NotePropertyValue $Tags
     
     # Create request body by converting to JSON
     $Body = $Item | ConvertTo-Json
+Write-Host $Body
 
     # Invoke Request
     $Result = (Invoke-RestMethod -Uri $Uri -Method Post -ContentType "application/json" -Headers $TenantHead -Body $Body -ErrorAction SilentlyContinue -ErrorVariable ScriptError)
