@@ -145,15 +145,18 @@ $Uri = $DataRegion+"/endpoint/v1/settings/web-control/local-sites"
 
 
 # Import data from CSV
-Write-Output "Importing sites from CSV..."
+Write-Output "Importing sites from json input file..."
 Write-Output ""
-$importFile = Import-Csv $PSScriptRoot\websites.csv
+$local:importFile = Get-content -Path $Input01Value -Raw | ConvertFrom-Json
+$local:ArrayWebList = @($local:importFile)
+
+$local:ArrayWebList | Format-Table -AutoSize
 
 # Iterate through all sites from CSV
 Write-Output "Creating local sites in Sophos Central..."
 Write-Output ""
 
-foreach ($Item in $ImportFile){
+foreach ($Item in $local:ArrayWebList){
 
     # Split string in case of multiple tags
     $Tags = @($Item.tags.split("{;}"))

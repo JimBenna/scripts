@@ -131,7 +131,7 @@ $Uri = $DataRegion+"/endpoint/v1/settings/web-control/local-sites"
             CategoryId      = $Node.categoryId
             Tags            = $Node.tags
             Url             = $Node.url
-            Comment         = $Node.coment
+            Comment         = $Node.comment
         }
     }
 #$LocalWebsitesArray | Format-Table -AutoSize
