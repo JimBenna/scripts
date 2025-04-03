@@ -1,0 +1,46 @@
+// To obtain further details about data please check : https://developer.sophos.com/docs/endpoint-v1/1/routes/settings/exclusions/scanning/post
+// Each entry ought to be structured as follows.
+// 
+// {
+//   "value": "C:\\xxx",
+//   "type": "path",  (select among path/posixPath, virtualPath, process, web, pua, detectedExploit, amsi, behavioral, journalHashingProcess, journalHashingPath)
+//   "scanMode": "onDemandAndOnAccess", (select among : onDemand/onAccess/onDemandAndAccess)
+//   "comment": "This is the trash directory",  (Please put a relevant description or comment)
+// },
+[
+  {
+    "value": "C:\\xxx",
+    "type": "path",
+    "scanMode": "onDemandAndOnAccess",
+    "comment": "This is the trash directory",
+  },
+  {
+    "value": "www.sophos.com",
+    "type": "web",
+    "scanMode": "onAccess",
+    "comment": "We can certainly exclude sophos.com website",
+  },
+  {
+    "value": "692ba6a23003f06d34eaf215a817b67f24ca71162ad0d165184119e89cb9c240",
+    "type": "journalHashingProcess",
+    "comment": "Hash of the software called hashmyfiles.exe version 2.50 compiled in 64bits mode",
+  },
+  {
+    "value": "notepad++.exe",
+    "type": "process",
+    "scanMode": "onDemand",
+    "comment": "NotePad++ should not be scanned on Demand",
+  },
+  {
+    "value": "/home/*/Documents",
+    "type": "posixPath",
+    "scanMode": "onDemand",
+    "comment": "This the user's documents own directory",
+  },
+  {
+    "value": "192.168.222.2",
+    "type": "web",
+    "scanMode": "onAccess",
+    "comment": "This internal server hosts our internal webserver",
+  }
+]

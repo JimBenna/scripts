@@ -3,7 +3,10 @@ param (
     [string]$ParamClientId = "",
 
     [Parameter(Mandatory=$true)]
-    [string]$ParamClientSecret = ""
+    [string]$ParamClientSecret = "",
+
+    [Parameter(Mandatory=$true)]
+    [string]$JsonInputFile = ""
 )
 
 function Split-StringAfterEqualSign {
@@ -36,7 +39,12 @@ try {
         Write-Output "No Client Secret provided"
         {break}
     }
-    else {
+    if (($null -eq $JsonInputFile) -or ($JsonInputFile -eq "")){
+        Write-Output "No JSON input file provided"
+        {break}
+    }
+    else 
+    {
         $resultClient = Split-StringAfterEqualSign -inputString $ParamClientId
         #Write-Host "Id Client     : "$resultClient.Key
         #Write-Host "Client ID     : "$resultClient.Value
@@ -45,17 +53,33 @@ try {
         #Write-Host "Id Secret     : "$resultSecret.Key
         #Write-Host "Client Secret : "$resultSecret.Value
         $ClientSecret=$resultSecret.Value
+        $JsonFileVariable = Split-StringAfterEqualSign -inputString $JsonInputFile
+        $JsonFile = $JsonFileVariable.Value
+        if (-Not (Test-Path -Path $JsonFile)) 
+        {
+            # Input file does not exist, we should stop
+            Write-Host "File "$JsonFile" does not exist"
+            exit 11
+        }
+        else 
+        {
+            try {
+                $file01 = Get-Item $JsonFile
+                $file01.OpenRead().Close()    
+            }
+            catch {
+                Write-Host "File "$JsonFile" exists but can not be accessed in Read mode"
+                exit 12    
+            }
+        }
     }
 } catch {
     Write-Error "A basic error occurred: $_"
     exit 1
 }
 Write-Output "==============================================================================="
-Write-Output "Sophos CENTRAL API - Retrieve Global exclusions list"
+Write-Output "Sophos CENTRAL API - Setup Global exclusions list"
 Write-Output "==============================================================================="
-#CSV filename and full directory
-$ScriptLaunchDate= Get-Date -Format "yyyyMMddHHmmssfff"
-$OutputFile = "Global_exclusions_list_$ScriptLaunchDate.json"
 # SOPHOS OAuth URL
 $AuthURI = "https://id.sophos.com/api/v2/oauth2/token"
 
@@ -120,24 +144,35 @@ $TenantHead.Add("Content-Type", "application/json")
 $Uri = $DataRegion+"/endpoint/v1/settings/exclusions/scanning"
 
 
+# Import data from CSV
+Write-Output "Importing sites from json input file..."
+Write-Output ""
+$local:importFile = Get-content -Path $JsonFile -Raw | ConvertFrom-Json
+$local:ArrayExclusionsList = @($local:importFile)
+
+$local:ArrayExclusionsList | Format-Table -Wrap
+
+# Iterate through all sites from CSV
+Write-Output "Creating Global Exclusions in Sophos Central..."
+Write-Output ""
+
+foreach ($Item in $local:ArrayExclusionsList){
+
+    # Split string in case of multiple tags
+ #   $Tags = @($Item.tags.split("{;}"))
+
+    # Change tags into an array
+#    $Item.PSobject.Properties.Remove('tags')
+#	$Item | Add-Member -NotePropertyName tags -NotePropertyValue $Tags
+    
+    # Create request body by converting to JSON
+    $Body = $Item | ConvertTo-Json
+# Write-Host $Body
 
     # Invoke Request
-    $Result = (Invoke-RestMethod -Uri $Uri -Method Get -ContentType "application/json" -Headers $TenantHead -ErrorAction SilentlyContinue -ErrorVariable ScriptError)
-#    Write-Output "Result :" $Result
-    $ScanExclusionsList = @()
-    foreach ($Node in $Result.items) {
-        $ScanExclusionsList += [pscustomobject]@{
-            id                      = $Node.id
-            value                   = $Node.value
-            type                    = $Node.type
-            scanMode                = $Node.scanMode
-            comment                 = $Node.comment
-            lockedByManagingAccount = $Node.lockedByManagingAccount
-        }
-    }
-#$ScanExclusionsList | Format-Table -Wrap
-$Table_In_JSON = $ScanExclusionsList | Sort-Object -Property id | ConvertTo-Json -Depth 5
-#l$Table_In_JSON
-$Table_In_JSON | Out-File -FilePath $OutputFile utf8    
+    $Result = (Invoke-RestMethod -Uri $Uri -Method Post -ContentType "application/json" -Headers $TenantHead -Body $Body -ErrorAction SilentlyContinue -ErrorVariable ScriptError)
+    Write-Output "Created Exclusion: $($Result.value) with ID $($Result.id) with Type $($Result.type) and scan mode $($Result.scanMode)"
+    
+}
 Write-Output ""
-Write-Output "Script executed successfully ..."
+Write-Output "Successfully created Global exclusions list in Sophos Central tenant..."
