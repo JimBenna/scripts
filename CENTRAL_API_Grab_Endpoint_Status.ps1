@@ -52,13 +52,13 @@ try {
 }
 
 Write-Output "==============================================================================="
-Write-Output "Sophos CENTRAL API - Endpoints Status"
+Write-Output "            Sophos CENTRAL API - Endpoints details and Status"
 Write-Output "==============================================================================="
 #Date Management for variable
 
 #CSV filename and full directory
 $ScriptLaunchDate= Get-Date -Format "yyyyMMddHHmmssfff"
-$CSV_Endpoints_list = "Endpoints_list_$ScriptLaunchDate.csv"
+$OutputFile = "Endpoints_list_$ScriptLaunchDate.json"
 
 
 # SOPHOS OAuth URL
@@ -129,39 +129,41 @@ $TenantHead.Add("X-Tenant-ID" ,"$TenantID")
 $TenantHead.Add("Content-Type", "application/json")
 
 do {
-    $GetEndpoints = (Invoke-RestMethod -Method Get -Uri $DataRegion"/endpoint/v1/endpoints?pageTotal=true&pageFromKey=$NextKey&fields=hostname,tamperProtectionEnabled,health,os&view=summary&sort=healthStatus" -Headers $TenantHead -ErrorAction SilentlyContinue -ErrorVariable ScriptError)
+    $GetEndpoints = (Invoke-RestMethod -Method Get -Uri $DataRegion"/endpoint/v1/endpoints?pageTotal=true&pageFromKey=$NextKey&view=summary&sort=healthStatus" -Headers $TenantHead -ErrorAction SilentlyContinue -ErrorVariable ScriptError)
     $NextKey = $GetEndpoints.pages.nextKey
-
     $EndpointList += $GetEndpoints.items
 } while ($null -ne $NextKey)      
-
-Write-Output $EndpointList | Format-Table -Property @{label='Name';e={$_.Hostname}}, 
-                                                    @{label='TP Status';align='right';e={$_.tamperProtectionEnabled}},
-                                                    @{label='Health Overall';align='right';e={$_.health.overall}}, 
-                                                    @{label='Health Threats';align='right';e={$_.health.threats.status}}, 
-                                                    @{label='Health Services';align='right';e={$_.health.services.status}}, 
-                                                    @{label='OS';e={$_.os.name}}
-
-
-$FilterData=New-Object System.Data.Datatable
-[void]$FilterData.Columns.Add("HostID")
-[void]$FilterData.Columns.Add("Hostname")
-[void]$FilterData.Columns.Add("HealtStatus")
-[void]$FilterData.Columns.Add("ThreatsList")
-[void]$FilterData.Columns.Add("Services")
-[void]$FilterData.Columns.Add("IsServer")
-[void]$FilterData.Columns.Add("Platform")
-[void]$FilterData.Columns.Add("Name")
-[void]$FilterData.Columns.Add("MajorVersion")
-[void]$FilterData.Columns.Add("MinorVersion")
-[void]$FilterData.Columns.Add("BuildVersion")
-[void]$FilterData.Columns.Add("TamperProtectionEnabled")
-
-
-foreach ($row in $EndpointList) 
-{
-    [void]$FilterData.Rows.Add($row.id,$row.hostname,$row.health.overall,$row.health.threats.status,$row.services,$row.os.IsServer,$row.os.platform, $row.os.name, $row.os.majorVersion, $row.os.minorVersion, $row.os.build, $row.tamperProtectionEnabled)       
+#$EndpointList
+$EndpointsListArray = @()
+foreach ($Node in $EndpointList) {
+    $EndpointsListArray += [pscustomobject]@{
+        id                      = $Node.id
+        type                    = $Node.type
+        hostname                = $Node.hostname
+        HealthStatus            = $Node.health.overall
+        HealthThreats           = $Node.health.threats
+        HealthServices          = $Node.health.services
+        IsServer                = $Node.os.IsServer
+        platform                = $Node.os.platform
+        name                    = $Node.os.name
+        OsMajorVersion          = $Node.os.majorVersion
+        OsMinorVersion          = $Node.os.minorVersion
+        OsBuild                 = $Node.os.build
+        IpV4AddList             = $Node.ipv4Addresses
+        IpV6AddList             = $Node.ipv6Addresses
+        MacAddList              = $Node.macAddresses           
+        LoggedUser              = $Node.associatedPerson.viaLogin
+        TamperProtectionStatus  = $Node.tamperProtectionEnabled
+        IsolationStatus         = $Node.isolation.status
+        IsolatedByAdmin         = $Node.isolation.adminIsolated
+        IsolatedAuto            = $Node.isolation.selfIsolated
+    }
 }
-#Create files
-#$FilterData
-$FilterData | Export-Csv -Path $CSV_Endpoints_list -NoTypeInformation                                                    
+
+#$EndpointsListArray | Format-Table -Wrap
+$Table_In_JSON = $EndpointsListArray | Sort-Object -Property id | ConvertTo-Json -Depth 5
+#$Table_In_JSON
+$Table_In_JSON | Out-File -FilePath $OutputFile utf8    
+Write-Output ""
+Write-Output "Script executed successfully ..."
+                                                   
