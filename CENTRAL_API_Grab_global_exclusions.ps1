@@ -123,7 +123,7 @@ $Uri = $DataRegion+"/endpoint/v1/settings/exclusions/scanning"
 
     # Invoke Request
     $Result = (Invoke-RestMethod -Uri $Uri -Method Get -ContentType "application/json" -Headers $TenantHead -ErrorAction SilentlyContinue -ErrorVariable ScriptError)
-    Write-Output "Result :" $Result
+#    Write-Output "Result :" $Result
     $ScanExclusionsList = @()
     foreach ($Node in $Result.items) {
         $ScanExclusionsList += [pscustomobject]@{
