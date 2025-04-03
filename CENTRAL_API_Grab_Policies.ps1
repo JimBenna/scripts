@@ -125,36 +125,24 @@ $NextKey = $null
         $NextKey = $GetPolicies.pages.nextKey
         $PoliciesList += $GetPolicies.items
     } while ($null -ne $NextKey)      
-    $PoliciesList
+#    $PoliciesList
     $PoliciesListArray = @()
     foreach ($Node in $PoliciesList) {
         $PoliciesListArray += [pscustomobject]@{
             id                      = $Node.id
-            type                    = $Node.type
-            Name                    = $Node.name
-            Group                   = $Node.group
-            HealthStatus            = $Node.health.overall
-            HealthThreats           = $Node.health.threats
-            HealthServices          = $Node.health.services
-            IsServer                = $Node.os.IsServer
-            platform                = $Node.os.platform
-            OsMajorVersion          = $Node.os.majorVersion
-            OsMinorVersion          = $Node.os.minorVersion
-            OsBuild                 = $Node.os.build
-            IpV4AddList             = $Node.ipv4Addresses
-            IpV6AddList             = $Node.ipv6Addresses
-            MacAddList              = $Node.macAddresses           
-            LoggedUser              = $Node.associatedPerson.viaLogin
-            TamperProtectionStatus  = $Node.tamperProtectionEnabled
-            IsolationStatus         = $Node.isolation.status
-            IsolatedByAdmin         = $Node.isolation.adminIsolated
-            IsolatedAuto            = $Node.isolation.selfIsolated
+            Name                    = $Node.name            
+            Type                    = $Node.type
+            Priority                = $Node.priority
+            Enabled                 = $Node.enabled
+            Settings                = $Node.settings
+            AppliesToUsers          = $Node.appliesTo.users
+            AppliesToGroups         = $Node.appliesTo.userGroups
         }
     }
     
-    $PoliciesListArray 
+#    $PoliciesListArray 
     $Table_In_JSON = $PoliciesListArray | Sort-Object -Property Name | ConvertTo-Json -Depth 5
-    #$Table_In_JSON
-    #$Table_In_JSON | Out-File -FilePath $OutputFile utf8    
+#    $Table_In_JSON
+    $Table_In_JSON | Out-File -FilePath $OutputFile utf8    
     Write-Output ""
     Write-Output "Script executed successfully ..."
