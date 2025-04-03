@@ -24,17 +24,18 @@ function Split-StringAfterEqualSign {
     }
     catch {
         Write-Error "An error occurred: $_"
+        {break}
     }
 }
 Clear-Host
 try {
     if (($null -eq $ParamClientId) -or ($ParamClientId -eq "")) {
         Write-Output "No Client Id provided"
-        {break}
+        exit 1
     }
         if (($null -eq $ParamClientSecret) -or ($ParamClientSecret -eq "")){
         Write-Output "No Client Secret provided"
-        {break}
+        exit 2
     }
     else {
         $resultClient = Split-StringAfterEqualSign -inputString $ParamClientId
@@ -48,18 +49,16 @@ try {
     }
 } catch {
     Write-Error "A basic error occurred: $_"
-    exit 1
+    exit 3
 }
 
 Write-Output "==============================================================================="
 Write-Output "            Sophos CENTRAL API - Endpoints details and Status"
 Write-Output "==============================================================================="
-#Date Management for variable
 
 #CSV filename and full directory
 $ScriptLaunchDate= Get-Date -Format "yyyyMMddHHmmssfff"
 $OutputFile = "Endpoints_list_$ScriptLaunchDate.json"
-
 
 # SOPHOS OAuth URL
 $AuthURI = "https://id.sophos.com/api/v2/oauth2/token"
@@ -81,10 +80,6 @@ $AuthHead.Add("content-type", "application/x-www-form-urlencoded")
 # Post Request to SOPHOS for OAuth2 token
 try {
     $Result = (Invoke-RestMethod -Method Post -Uri $AuthURI -Body $AuthBody -Headers $AuthHead -ErrorAction SilentlyContinue -ErrorVariable ScriptError)
-    if ($SaveCredentials) {
-	    $ClientSecret = $ClientSecret | ConvertFrom-SecureString
-	    ConvertTo-Json $ClientID, $ClientSecret | Out-File $CredentialFile -Force
-    }
 } catch {
     # If there's an error requesting the token, say so, display the error, and break:
     Write-Output "" 
@@ -92,7 +87,7 @@ try {
     Write-Output "Please verify the credentials used!" 
     Write-Output "" 
     Read-Host -Prompt "Press ENTER to continue..."
-    exit 2
+    exit 4
 }
 
 # Set the Token for use later on:
@@ -112,7 +107,7 @@ $Result = (Invoke-RestMethod -Method Get -Uri $WhoamiURI -Headers $WhoamiHead -E
 # Check if we are using tenant (Central Admin) credentials
 if ($Result.idType -ne "tenant") {
     Write-Output "Aborting script - idType does not match tenant!"
-    Break
+    exit 5
 }
 
 # Save Response details
@@ -140,6 +135,7 @@ foreach ($Node in $EndpointList) {
         id                      = $Node.id
         type                    = $Node.type
         hostname                = $Node.hostname
+        Group                   = $Node.group
         HealthStatus            = $Node.health.overall
         HealthThreats           = $Node.health.threats
         HealthServices          = $Node.health.services
