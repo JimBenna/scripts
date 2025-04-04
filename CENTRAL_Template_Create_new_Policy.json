@@ -2,7 +2,7 @@
   {
     "name": "All settings activated",
     "type": "threat-protection",
-    "priority": 99,
+    "priority": 10,
     "enabled": true,
     "settings": {
       "endpoint.threat-protection.block-active-adversary-mitigation.enabled": {
@@ -11,231 +11,82 @@
       "endpoint.threat-protection.block-safeboot-usage.enabled": {
         "value": true
       },
-      "endpoint.threat-protection.event-logging.enabled": {
-        "value": true
-      },
-      "endpoint.threat-protection.exclusions.intrusion-prevention": {
-        "value": true
-      },
-      "endpoint.threat-protection.exclusions.isolation": {
-        "value": true
-      },
       "endpoint.threat-protection.exclusions.scanning": {
         "value": [
           {
-            "value": "e344acfefad3edeb9b681f6dbee66dd1c751d3a344f1ec6eae86aecaaf694d14",
+            "value": "C:\\xxx",
             "type": "path",
-            "scanMode": "onDemandAndOnAccess"
+            "scanMode": "onDemandAndOnAccess",
+          },
+          {
+            "value": "www.sophos.com",
+            "type": "web",
+            "scanMode": "onAccess",
+          },
+          {
+            "value": "692ba6a23003f06d34eaf215a817b67f24ca71162ad0d165184119e89cb9c240",
+            "type": "journalHashingProcess",
+          },
+          {
+            "value": "notepad++.exe",
+            "type": "process",
+            "scanMode": "onDemand",
+            "comment": "NotePad++ should not be scanned on Demand",
+          },
+          {
+            "value": "/home/*/Documents",
+            "type": "posixPath",
+            "scanMode": "onDemand",
+          },
+          {
+            "value": "192.168.222.2",
+            "type": "web",
+            "scanMode": "onAccess",
           }
         ]
-      },
-      "endpoint.threat-protection.exploit-mitigation.all-mitigations.enabled": {
-        "value": true
-      },
-      "endpoint.threat-protection.exploit-mitigation.amsi-registration-protection.enabled": {
-        "value": true
-      },
-      "endpoint.threat-protection.exploit-mitigation.application-protection.enabled": {
-        "value": true
-      },
-      "endpoint.threat-protection.exploit-mitigation.application-protection.java-applications.enabled": {
-        "value": true
-      },
-      "endpoint.threat-protection.exploit-mitigation.application-protection.media-applications.enabled": {
-        "value": true
-      },
-      "endpoint.threat-protection.exploit-mitigation.application-protection.office-applications.enabled": {
-        "value": true
-      },
-      "endpoint.threat-protection.exploit-mitigation.application-protection.web-browser-plugins.enabled": {
-        "value": true
-      },
-      "endpoint.threat-protection.exploit-mitigation.application-protection.web-browsers.enabled": {
-        "value": true
-      },
-      "endpoint.threat-protection.exploit-mitigation.browser-cookie-protection.enabled": {
-        "value": true
-      },
-      "endpoint.threat-protection.exploit-mitigation.c2-interceptor.enabled": {
-        "value": true
-      },
-      "endpoint.threat-protection.exploit-mitigation.cryptoguard.action-on-ransomeware-detection": {
-        "value": "terminate"
-      },
-      "endpoint.threat-protection.exploit-mitigation.cryptoguard.efs-protection.enabled": {
-        "value": true
-      },
-      "endpoint.threat-protection.exploit-mitigation.cryptoguard.enabled": {
-        "value": true
-      },
-      "endpoint.threat-protection.exploit-mitigation.cryptoguard.smb-protection.enabled": {
-        "value": true
-      },
-      "endpoint.threat-protection.exploit-mitigation.ctf-protocol-caller-validation.enabled": {
-        "value": true
-      },
-      "endpoint.threat-protection.exploit-mitigation.device-io-control.enabled": {
-        "value": true
-      },
-      "endpoint.threat-protection.exploit-mitigation.dynamic-shellcode-protection.enabled": {
-        "value": true
-      },
-      "endpoint.threat-protection.exploit-mitigation.hardware-breakpoint-guard.enabled": {
-        "value": true
-      },
-      "endpoint.threat-protection.exploit-mitigation.mbr-protection.enabled": {
-        "value": true
-      },
-      "endpoint.threat-protection.exploit-mitigation.process-protection.access-token-protection.enabled": {
-        "value": true
-      },
-      "endpoint.threat-protection.exploit-mitigation.process-protection.apc-violation-protection.enabled": {
-        "value": true
-      },
-      "endpoint.threat-protection.exploit-mitigation.process-protection.code-cave-mitigation.enabled": {
-        "value": true
-      },
-      "endpoint.threat-protection.exploit-mitigation.process-protection.credential-theft-protection.enabled": {
-        "value": true
-      },
-      "endpoint.threat-protection.exploit-mitigation.process-protection.dll-hijacking-protection.enabled": {
-        "value": true
-      },
-      "endpoint.threat-protection.exploit-mitigation.process-protection.enabled": {
-        "value": true
-      },
-      "endpoint.threat-protection.exploit-mitigation.process-protection.privilege-escalation-protection.enabled": {
-        "value": true
-      },
-      "endpoint.threat-protection.exploit-mitigation.process-protection.process-hollowing-protection.enabled": {
-        "value": true
-      },
-      "endpoint.threat-protection.exploit-mitigation.process-protection.registry-credential-theft-protection.enabled": {
-        "value": true
-      },
-      "endpoint.threat-protection.exploit-mitigation.safe-browsing.enabled": {
-        "value": true
-      },
-      "endpoint.threat-protection.exploit-mitigation.side-loading-protection.enabled": {
-        "value": true
-      },
-      "endpoint.threat-protection.exploit-mitigation.sys-call.enabled": {
-        "value": true
-      },
-      "endpoint.threat-protection.exploit-mitigation.ultra-exclude.enabled": {
-        "value": false
-      },
-      "endpoint.threat-protection.heartbeat-protection.enabled": {
-        "value": true
-      },
-      "endpoint.threat-protection.journal-hashing.exclude-remote-files.enabled": {
-        "value": false
-      },
-      "endpoint.threat-protection.malware-protection.amsi-protection.enabled": {
-        "value": true
-      },
-      "endpoint.threat-protection.malware-protection.behavioral-detection.enabled": {
-        "value": true
-      },
-      "endpoint.threat-protection.malware-protection.cleanup.enabled": {
-        "value": true
-      },
-      "endpoint.threat-protection.malware-protection.deep-learning.detection-level": {
-        "value": "default"
-      },
-      "endpoint.threat-protection.malware-protection.deep-learning.enabled": {
-        "value": true
-      },
-      "endpoint.threat-protection.malware-protection.desktop-messaging.enabled": {
-        "value": true
       },
       "endpoint.threat-protection.malware-protection.desktop-messaging.message": {
         "value": "We have setup the maximal prootection available. If you have any trouble contact IT Support"
       },
-      "endpoint.threat-protection.malware-protection.email-protection.attachment-file-types-blocking.enabled": {
-        "value": false
-      },
-      "endpoint.threat-protection.malware-protection.exclude-remote-files": {
-        "value": false
-      },
-      "endpoint.threat-protection.malware-protection.file-reputation.action": {
-        "value": "prompt"
-      },
-      "endpoint.threat-protection.malware-protection.file-reputation.enabled": {
-        "value": true
-      },
-      "endpoint.threat-protection.malware-protection.file-reputation.reputation-level": {
-        "value": "recommended"
-      },
-      "endpoint.threat-protection.malware-protection.hips-detection.enabled": {
-        "value": true
-      },
-      "endpoint.threat-protection.malware-protection.live-protection.enabled": {
-        "value": true
-      },
-      "endpoint.threat-protection.malware-protection.on-access.enabled": {
+      "endpoint.threat-protection.network-protection.self-isolation.enabled": {
         "value": true
       },
       "endpoint.threat-protection.malware-protection.scheduled-scan.days": {
         "value": [
-          5,6
+          3,6,7
         ],
         "unit": "day"
     },
-      "endpoint.threat-protection.malware-protection.scheduled-scan.deep-scanning.enabled": {
-        "value": false
-      },
-      "endpoint.threat-protection.malware-protection.scheduled-scan.enabled": {
-        "value": true
-      },
-      "endpoint.threat-protection.malware-protection.scheduled-scan.scan-all-files.enabled": {
-        "value": false
-      },
-      "endpoint.threat-protection.malware-protection.scheduled-scan.time": {
-        "value": "04:00"
-      },
-      "endpoint.threat-protection.malware-protection.skip-trusted-installers": {
-        "value": false
-      },
-      "endpoint.threat-protection.malware-protection.web-filtering.enabled": {
-        "value": true
-      },
-      "endpoint.threat-protection.malware-protection.web-scanning.enabled": {
-        "value": true
-      },
-      "endpoint.threat-protection.network-protection.c2-detection.enabled": {
-        "value": true
-      },
-      "endpoint.threat-protection.network-protection.connection-tracking.enabled": {
-        "value": true
-      },
-      "endpoint.threat-protection.network-protection.enabled": {
-        "value": true
-      },
-      "endpoint.threat-protection.network-protection.ips.all.enabled": {
-        "value": true
-      },
-      "endpoint.threat-protection.network-protection.ips.enabled": {
-        "value": true
-      },
-      "endpoint.threat-protection.network-protection.self-isolation.enabled": {
-        "value": true
-      },
-      "endpoint.threat-protection.process-memory-background-scan.enabled": {
-        "value": true
-      },
-      "endpoint.threat-protection.protect-in-safeboot.enabled": {
-        "value": true
-      },
-      "endpoint.threat-protection.threat-analysis.threat-case-creation.enabled": {
-        "value": true
-      },
-      "endpoint.threat-protection.web-control.tls-decryption.enabled": {
-        "value": true
-      },
-      "endpoint.threat-protection.web-control.tls-decryption.quic.enabled": {
-        "value": true
-      }
+    "endpoint.threat-protection.malware-protection.scheduled-scan.enabled": {
+      "value": true
+    },
+    "endpoint.threat-protection.malware-protection.scheduled-scan.scan-all-files.enabled": {
+      "value": false
+    },
+    "endpoint.threat-protection.malware-protection.scheduled-scan.time": {
+      "value": "04:00"
+    },
+    "endpoint.threat-protection.malware-protection.scheduled-scan.scan-all-files.enabled": {
+      "value": true
+    },
+    "endpoint.threat-protection.malware-protection.scheduled-scan.deep-scanning.enabled": {
+      "value": true
+    },
+    "endpoint.threat-protection.protect-in-safeboot.enabled": {
+      "value": true
+    },
+    "endpoint.threat-protection.network-protection.ips.all.enabled": {
+      "value": true
+    },
+    "endpoint.threat-protection.network-protection.ips.enabled": {
+      "value": true
+    },
+    "endpoint.threat-protection.web-control.tls-decryption.enabled": {
+      "value": true
+    },
+    "endpoint.threat-protection.web-control.tls-decryption.quic.enabled": {
+      "value": true
+    }
     }
 }
 ]
