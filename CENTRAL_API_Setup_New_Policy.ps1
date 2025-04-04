@@ -150,30 +150,21 @@ Write-Output ""
 $local:importFile = Get-content -Path $JsonFile -Raw | ConvertFrom-Json
 $local:ArrayPolicySettings = @($local:importFile)
 
-$local:ArrayPolicySettings | Format-Table -AutoSize
+#$local:ArrayPolicySettings | Format-Table -AutoSize
 
 # Iterate through all sites from CSV
-Write-Output "Creating local sites in Sophos Central..."
+Write-Output "Creating Protection Policy in Sophos Central..."
 Write-Output ""
 
 foreach ($Item in $local:ArrayPolicySettings)
 {
-
-    # Split string in case of multiple tags
- #   $Tags = @($Item.tags.split("{;}"))
-
-    # Change tags into an array
-#    $Item.PSobject.Properties.Remove('tags')
-#	$Item | Add-Member -NotePropertyName tags -NotePropertyValue $Tags
-    
-    # Create request body by converting to JSON
     $Body = $Item | ConvertTo-Json -Depth 5
-Write-Host "Body :"$Body
+#Write-Host "Body :"$Body
 
     # Invoke Request
     $Result = (Invoke-RestMethod -Uri $Uri -Method Post -ContentType "application/json" -Headers $TenantHead -Body $Body -ErrorAction SilentlyContinue -ErrorVariable ScriptError)
-    Write-Output "Created Site: $($Result.name) with ID $($Result.id) and Type is $($Result.type)"
+    Write-Output "Created $($Result.type) Protection policy named : $($Result.name) with ID $($Result.id)"
     
 }
 Write-Output ""
-Write-Output "Successfully created websites and category in Sophos Central..."
+Write-Output "Successfully created The protection policy in Sophos Central..."
