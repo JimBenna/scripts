@@ -1,12 +1,12 @@
 param (
     [Parameter(Mandatory=$true)]
-    [string]$JsonInputFile = "",
-
-    [Parameter(Mandatory=$true)]
     [string]$ParamClientId = "",
 
     [Parameter(Mandatory=$true)]
-    [string]$ParamClientSecret = ""
+    [string]$ParamClientSecret = "",
+
+    [Parameter(Mandatory=$true)]
+    [string]$JsonInputFile = ""
 
 
 )
