@@ -1,0 +1,295 @@
+// Update Policy settings : 
+// See : https://developer.sophos.com/docs/endpoint-v1/1/routes/policies/%7BpolicyId%7D/patch
+[
+  {
+    "id": "<Threat_Protection_Policy_UID>",
+    "Settings": {
+      "endpoint.threat-protection.block-active-adversary-mitigation.enabled": {
+        "value": true,
+         },
+      "endpoint.threat-protection.exclusions.scanning": {
+        "value": [
+          {
+            "value": "C:\\xxx",
+            "type": "path",
+            "scanMode": "OnAccess"
+          },
+          {
+            "value": "/home/*/Documents",
+            "type": "posixPath",
+            "scanMode": "onDemandAndOnAccess"
+          },
+	  {
+            "value": "/home/*/Downloads",
+            "type": "posixPath",
+            "scanMode": "onDemand"
+          },
+          {
+            "value": "www.sophos.com",
+            "type": "web",
+            "scanMode": "onAccess"
+          },
+          {
+            "value": "10.183.11.252",
+            "type": "web",
+            "scanMode": "onAccess"
+          },
+          {
+            "value": "692ba6a23003f06d34eaf215a817b67f24ca71162ad0d165184119e89cb9c240",
+            "type": "journalHashingProcess"
+          },
+          {
+            "value": "9158fed9fb694bc7f7c0520205c101defdffe225a4c1f9af1a3c62314d51fdca",
+            "type": "journalHashingProcess"
+          }
+        ]
+      },
+      "endpoint.threat-protection.malware-protection.scheduled-scan.days": {
+        "value": [
+          3,
+          6,
+          7
+        ],
+        "unit": "day"
+      },
+      "endpoint.threat-protection.malware-protection.scheduled-scan.deep-scanning.enabled": {
+        "value": true
+      },
+      "endpoint.threat-protection.malware-protection.scheduled-scan.enabled": {
+        "value": true
+      },
+      "endpoint.threat-protection.malware-protection.scheduled-scan.scan-all-files.enabled": {
+        "value": true
+      },
+      "endpoint.threat-protection.malware-protection.scheduled-scan.time": {
+        "value": "02:00",
+        "format": "hourMinute"
+      },
+      "endpoint.threat-protection.web-control.tls-decryption.enabled": {
+        "value": true
+      },
+      "endpoint.threat-protection.web-control.tls-decryption.quic.enabled": {
+        "value": true
+      }
+    },
+  },
+  {
+    "id": "<Web_Control_Protection_Policy_UID>",
+    "Settings": {
+      "endpoint.web-control.categories.0.action": {
+        "value": "warn"
+      },
+      "endpoint.web-control.categories.1.action": {
+        "value": "block"
+      },
+      "endpoint.web-control.categories.10.action": {
+        "value": "block"
+      },
+      "endpoint.web-control.categories.11.action": {
+        "value": "allow"
+      },
+      "endpoint.web-control.categories.12.action": {
+        "value": "allow"
+      },
+      "endpoint.web-control.categories.13.action": {
+        "value": "allow"
+      },
+      "endpoint.web-control.categories.14.action": {
+        "value": "allow"
+      },
+      "endpoint.web-control.categories.15.action": {
+        "value": "allow"
+      },
+      "endpoint.web-control.categories.16.action": {
+        "value": "allow"
+      },
+      "endpoint.web-control.categories.17.action": {
+        "value": "allow"
+      },
+      "endpoint.web-control.categories.18.action": {
+        "value": "allow"
+      },
+      "endpoint.web-control.categories.19.action": {
+        "value": "block"
+      },
+      "endpoint.web-control.categories.2.action": {
+        "value": "block"
+      },
+      "endpoint.web-control.categories.20.action": {
+        "value": "allow"
+      },
+      "endpoint.web-control.categories.21.action": {
+        "value": "allow"
+      },
+      "endpoint.web-control.categories.22.action": {
+        "value": "allow"
+      },
+      "endpoint.web-control.categories.23.action": {
+        "value": "block"
+      },
+      "endpoint.web-control.categories.24.action": {
+        "value": "allow"
+      },
+      "endpoint.web-control.categories.25.action": {
+        "value": "block"
+      },
+      "endpoint.web-control.categories.26.action": {
+        "value": "block"
+      },
+      "endpoint.web-control.categories.27.action": {
+        "value": "allow"
+      },
+      "endpoint.web-control.categories.28.action": {
+        "value": "allow"
+      },
+      "endpoint.web-control.categories.29.action": {
+        "value": "allow"
+      },
+      "endpoint.web-control.categories.3.action": {
+        "value": "block"
+      },
+      "endpoint.web-control.categories.30.action": {
+        "value": "allow"
+      },
+      "endpoint.web-control.categories.31.action": {
+        "value": "block"
+      },
+      "endpoint.web-control.categories.32.action": {
+        "value": "warn"
+      },
+      "endpoint.web-control.categories.33.action": {
+        "value": "allow"
+      },
+      "endpoint.web-control.categories.35.action": {
+        "value": "warn"
+      },
+      "endpoint.web-control.categories.36.action": {
+        "value": "allow"
+      },
+      "endpoint.web-control.categories.37.action": {
+        "value": "block"
+      },
+      "endpoint.web-control.categories.38.action": {
+        "value": "allow"
+      },
+      "endpoint.web-control.categories.39.action": {
+        "value": "allow"
+      },
+      "endpoint.web-control.categories.4.action": {
+        "value": "allow"
+      },
+      "endpoint.web-control.categories.40.action": {
+        "value": "allow"
+      },
+      "endpoint.web-control.categories.41.action": {
+        "value": "block"
+      },
+      "endpoint.web-control.categories.42.action": {
+        "value": "allow"
+      },
+      "endpoint.web-control.categories.43.action": {
+        "value": "block"
+      },
+      "endpoint.web-control.categories.44.action": {
+        "value": "allow"
+      },
+      "endpoint.web-control.categories.45.action": {
+        "value": "allow"
+      },
+      "endpoint.web-control.categories.47.action": {
+        "value": "allow"
+      },
+      "endpoint.web-control.categories.49.action": {
+        "value": "block"
+      },
+      "endpoint.web-control.categories.5.action": {
+        "value": "warn"
+      },
+      "endpoint.web-control.categories.50.action": {
+        "value": "block"
+      },
+      "endpoint.web-control.categories.51.action": {
+        "value": "allow"
+      },
+      "endpoint.web-control.categories.52.action": {
+        "value": "block"
+      },
+      "endpoint.web-control.categories.53.action": {
+        "value": "block"
+      },
+      "endpoint.web-control.categories.54.action": {
+        "value": "block"
+      },
+      "endpoint.web-control.categories.6.action": {
+        "value": "allow"
+      },
+      "endpoint.web-control.categories.7.action": {
+        "value": "warn"
+      },
+      "endpoint.web-control.categories.8.action": {
+        "value": "allow"
+      },
+      "endpoint.web-control.categories.9.action": {
+        "value": "block"
+      },
+      "endpoint.web-control.enabled": {
+        "value": true
+      },
+      "endpoint.web-control.filetypes.archive-jar.action": {
+        "value": "block"
+      },
+      "endpoint.web-control.filetypes.doc-pdf.action": {
+        "value": "block"
+      },
+      "endpoint.web-control.filetypes.exe-com.action": {
+        "value": "block"
+      },
+      "endpoint.web-control.filetypes.exe-dll.action": {
+        "value": "block"
+      },
+      "endpoint.web-control.filetypes.exe-exe.action": {
+        "value": "block"
+      },
+      "endpoint.web-control.filetypes.exe-javabytecode.action": {
+        "value": "block"
+      },
+      "endpoint.web-control.filetypes.exe-msi.action": {
+        "value": "block"
+      },
+      "endpoint.web-control.filetypes.exe-ocx.action": {
+        "value": "block"
+      },
+      "endpoint.web-control.filetypes.exe-unknown.action": {
+        "value": "block"
+      },
+      "endpoint.web-control.filetypes.video-flv.action": {
+        "value": "block"
+      },
+      "endpoint.web-control.schedule.active-periods": {
+        "value": []
+      },
+      "endpoint.web-control.schedule.enabled": {
+        "value": false
+      },
+      "endpoint.web-control.tags.settings": {
+        "value": [
+          {
+            "tag": "Block",
+            "action": "block"
+          },
+          {
+            "tag": "Warn",
+            "action": "warn"
+          },
+          {
+            "tag": "Allow",
+            "action": "allow"
+          }
+        ]
+      },
+      "endpoint.web-control.web-monitoring.enabled": {
+        "value": "yes"
+      }
+    },
+  }
+]
