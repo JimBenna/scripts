@@ -150,7 +150,7 @@ Write-Output ""
 $local:importFile = Get-content -Path $JsonFile -Raw | ConvertFrom-Json
 $local:ArrayPolicySettings = @($local:importFile)
 
-$local:ArrayPolicySettings | Format-Table -AutoSize
+$local:ArrayPolicySettings | Format-Table -Wrap
 
 # Iterate through all sites from CSV
 Write-Output "Updating Protection Policies in Sophos Central..."
@@ -159,7 +159,9 @@ Write-Output ""
 foreach ($Item in $local:ArrayPolicySettings)
 {
     $Body = $Item | ConvertTo-Json -Depth 5
-Write-Host "Body :"$Body
+Write-Host "Body ID               :"$Item.id
+#Write-host "Body Settings         :"$Item.Settings
+write-host "Body Settings in Json :"$($Item.Settings) | ConvertTo-Json -Depth 5
 
     # Invoke Request
 #    $Result = (Invoke-RestMethod -Uri $Uri -Method Post -ContentType "application/json" -Headers $TenantHead -Body $Body -ErrorAction SilentlyContinue -ErrorVariable ScriptError)
