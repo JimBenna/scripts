@@ -147,7 +147,8 @@ $Uri = $DataRegion+"/endpoint/v1/policies"
 # Import data from CSV
 Write-Output "Importing data from json input file..."
 Write-Output ""
-$local:importFile = Get-content -Path $JsonFile -Raw | ConvertFrom-Json
+Get-Content
+$local:importFile = Get-content -Path $JsonFile -Raw | ConvertFrom-Json 
 $local:ArrayPolicySettings = @($local:importFile)
 
 $local:ArrayPolicySettings | Format-Table -Wrap

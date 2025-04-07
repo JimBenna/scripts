@@ -49,14 +49,15 @@ try {
     {
         $resultClient = Split-StringAfterEqualSign -inputString $ParamClientId
         #Write-Host "Id Client     : "$resultClient.Key
-        #Write-Host "Client ID     : "$resultClient.Value
+        Write-Host "Client ID     : "$resultClient.Value
         $ClientId=$resultClient.Value
         $resultSecret = Split-StringAfterEqualSign -inputString $ParamClientSecret
         #Write-Host "Id Secret     : "$resultSecret.Key
-        #Write-Host "Client Secret : "$resultSecret.Value
+        Write-Host "Client Secret : "$resultSecret.Value
         $ClientSecret=$resultSecret.Value
         $JsonFileVariable = Split-StringAfterEqualSign -inputString $JsonInputFile
         $JsonFile = $JsonFileVariable.Value
+        Write-Host "Input JSON file : "$JsonFile
         if (-Not (Test-Path -Path $JsonFile)) 
         {
             # Input file does not exist, we should stop
