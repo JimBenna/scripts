@@ -78,7 +78,7 @@ try {
     exit 1
 }
 Write-Output "==============================================================================="
-Write-Output "              Sophos CENTRAL API - Update Protection Policies"
+Write-Output "              Sophos CENTRAL API - Setup new Protection Policy"
 Write-Output "==============================================================================="
 # SOPHOS OAuth URL
 $AuthURI = "https://id.sophos.com/api/v2/oauth2/token"
@@ -167,4 +167,4 @@ foreach ($Item in $local:ArrayPolicySettings)
     
 }
 Write-Output ""
-Write-Output "Successfully created The protection policy in Sophos Central..."
+Write-Output "Successfully created The protection policy in Sophos Central..."l
