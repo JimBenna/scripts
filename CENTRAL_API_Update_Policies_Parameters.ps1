@@ -161,7 +161,7 @@ foreach ($Item in $local:ArrayPolicySettings)
     $Body = $Item | ConvertTo-Json -Depth 5
 Write-Host "Body ID               :"$Item.id
 #Write-host "Body Settings         :"$Item.Settings
-write-host "Body Settings in Json :"$($Item.Settings) | ConvertTo-Json -Depth 5
+write-host "Body Settings in Json :"$($Item.settings) | ConvertTo-Json -Depth 5
 
     # Invoke Request
 #    $Result = (Invoke-RestMethod -Uri $Uri -Method Post -ContentType "application/json" -Headers $TenantHead -Body $Body -ErrorAction SilentlyContinue -ErrorVariable ScriptError)
