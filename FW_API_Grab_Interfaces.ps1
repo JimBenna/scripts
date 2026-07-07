@@ -1,7 +1,6 @@
 # This script reads a CSV file that contains firewalls list
 # It reads the following columns : IP ADDRESS, LOGIN NAME, PASSWORD, Access TimeOut in seconds
 # ---- CLI Parameters ----
-
 param (
     [parameter(Mandatory = $true)]
     [string]$InputFileFirewallList = ""
